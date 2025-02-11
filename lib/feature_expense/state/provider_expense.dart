@@ -9,6 +9,7 @@ class ProviderExpense extends ChangeNotifier {
   List<ModelMonth> listOfMonths = [];
   List<ModelCategory> listOfCategories = [];
   String selectedMonth = Constants.months[0];
+  double expensesByMonth = 0;
 
   void changeSelectedMonth(String month) {
     selectedMonth = month;
@@ -40,6 +41,7 @@ class ProviderExpense extends ChangeNotifier {
 
   Future<void> getAllCategories(String date) async {
     listOfCategories = await RepositoryExpense.getAllCategories(date);
+    expensesByMonth = getAllExpensesByMonth();
     notifyListeners();
   }
 
@@ -50,10 +52,19 @@ class ProviderExpense extends ChangeNotifier {
   Future<void> updateCategoryPaid(
       String date, String categoryName, double paid) async {
     ModelCategory? category =
-        await RepositoryExpense.getCategoryByDateAndCategory(date, categoryName);
-        if (category == null) {
-          return;
-        }
+        await RepositoryExpense.getCategoryByDateAndCategory(
+            date, categoryName);
+    if (category == null) {
+      return;
+    }
     await RepositoryExpense.updateCategoryPaid(category, category.paid + paid);
+  }
+
+  double getAllExpensesByMonth() {
+    double total = 0;
+    for (var item in listOfCategories) {
+      total += item.paid;
+    }
+    return total;
   }
 }

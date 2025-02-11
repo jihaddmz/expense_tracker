@@ -18,7 +18,7 @@ class KeypadScreen extends StatelessWidget {
     {"label": "7", "color": colorGrey},
     {"label": "8", "color": colorGrey},
     {"label": "9", "color": colorGrey},
-    {"label": "", "color": Colors.transparent}, // Empty slot
+    {"label": Icons.close, "color": colorOrange}, // Empty slot
     {"label": "\$", "color": colorYellow}, // Dollar sign
     {"label": "0", "color": colorGrey},
     {"label": ".", "color": colorGrey},
@@ -52,7 +52,9 @@ class KeypadScreen extends StatelessWidget {
                     onKeyPressed("backspace");
                   } else if (button["label"] == Icons.check) {
                     onKeyPressed("confirm");
-                  }
+                  } else if (button["label"] == Icons.close) {
+                    onKeyPressed("close");
+                  } 
                   else {
                     onKeyPressed(button["label"].toString());
                   }

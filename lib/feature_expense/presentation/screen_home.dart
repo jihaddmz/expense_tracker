@@ -50,6 +50,7 @@ class _ScreenHomeState extends State<ScreenHome> {
             HelperDialog.showBottomSheet(context, "Do you want to delete", () {
               setState(() {
                 _selectedBottomNavItem = 0;
+                Navigator.pop(context);
               });
             });
           }
@@ -156,9 +157,17 @@ class _ScreenHomeState extends State<ScreenHome> {
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
-                  Expanded(child: itemAnalyticsPer("Day", 23)),
-                  Expanded(child: itemAnalyticsPer("Week", 100)),
-                  Expanded(child: itemAnalyticsPer("Month", 400)),
+                  Expanded(
+                      child: itemAnalyticsPer(
+                          "Day",
+                          context.read<ProviderExpense>().expensesByMonth /
+                              30)),
+                  Expanded(
+                      child: itemAnalyticsPer("Week",
+                          context.read<ProviderExpense>().expensesByMonth / 4)),
+                  Expanded(
+                      child: itemAnalyticsPer("Month",
+                          context.read<ProviderExpense>().expensesByMonth)),
                 ],
               ),
             ),

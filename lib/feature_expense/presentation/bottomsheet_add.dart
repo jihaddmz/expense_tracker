@@ -47,7 +47,10 @@ class _BottomsheetAddState extends State<BottomsheetAdd> {
                 },
                 color: colorWhite,
                 itemBuilder: (BuildContext context) {
-                  return context.read<ProviderExpense>().listOfMonths.map((month) {
+                  return context
+                      .read<ProviderExpense>()
+                      .listOfMonths
+                      .map((month) {
                     return PopupMenuItem(
                       value: month.date,
                       child: customCaption(month.date),
@@ -108,7 +111,9 @@ class _BottomsheetAddState extends State<BottomsheetAdd> {
         customSubHeader(_paid),
         Expanded(
           child: KeypadScreen(onKeyPressed: (action) async {
-            if (action == "backspace") {
+            if (action == "close") {
+              widget.onConfirm();
+            } else if (action == "backspace") {
               setState(() {
                 _paid = _paid.substring(0, _paid.length - 1);
               });
@@ -121,7 +126,9 @@ class _BottomsheetAddState extends State<BottomsheetAdd> {
               await context
                   .read<ProviderExpense>()
                   .getAllCategories(_selectedMonth);
-              widget.onConfirm();
+              setState(() {
+                _paid = "\$0.0";
+              });
             } else if (action == ".") {
               if (!_paid.contains(".") && _paid.isNotEmpty) {
                 setState(() {
