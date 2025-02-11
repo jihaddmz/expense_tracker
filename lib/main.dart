@@ -1,10 +1,20 @@
+import 'package:expense_tracker/feature_expense/data/sqlite_database.dart';
 import 'package:expense_tracker/feature_expense/presentation/screen_home.dart';
+import 'package:expense_tracker/feature_expense/state/provider_expense.dart';
 import 'package:expense_tracker/feature_global/util/color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SqliteDatabase.createDatabase();
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (context) => ProviderExpense()),
+    ],
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {

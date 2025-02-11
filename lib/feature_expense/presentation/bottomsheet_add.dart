@@ -1,21 +1,32 @@
 import 'package:expense_tracker/feature_expense/components/keypad.dart';
+import 'package:expense_tracker/feature_expense/state/provider_expense.dart';
 import 'package:expense_tracker/feature_global/components/custom_button.dart';
 import 'package:expense_tracker/feature_global/components/custom_text.dart';
 import 'package:expense_tracker/feature_global/util/color.dart';
 import 'package:expense_tracker/feature_global/util/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class BottomsheetAdd extends StatefulWidget {
-  const BottomsheetAdd({super.key});
+  const BottomsheetAdd(this.onConfirm, {super.key});
+
+  final Function() onConfirm;
 
   @override
   State<BottomsheetAdd> createState() => _BottomsheetAddState();
 }
 
 class _BottomsheetAddState extends State<BottomsheetAdd> {
-  String _expense = "\$0.0";
-  String _selectedCategory = Constants.categories[0].name;
-  String _selectedMonth = Constants.months[0];
+  String _paid = "\$0.0";
+  String _selectedCategory = Constants.categories.entries.first.key;
+  late String _selectedMonth;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _selectedMonth = context.read<ProviderExpense>().selectedMonth;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,10 +47,10 @@ class _BottomsheetAddState extends State<BottomsheetAdd> {
                 },
                 color: colorWhite,
                 itemBuilder: (BuildContext context) {
-                  return Constants.months.map((month) {
+                  return context.read<ProviderExpense>().listOfMonths.map((month) {
                     return PopupMenuItem(
-                      value: month,
-                      child: customCaption(month),
+                      value: month.date,
+                      child: customCaption(month.date),
                     );
                   }).toList();
                 },
@@ -54,7 +65,10 @@ class _BottomsheetAddState extends State<BottomsheetAdd> {
             ),
             Expanded(
               child: PopupMenuButton(
-                initialValue: _selectedCategory,
+                initialValue: context
+                    .read<ProviderExpense>()
+                    .listOfCategories[0]
+                    .category,
                 onSelected: (value) => {
                   setState(() {
                     _selectedCategory = value.toString();
@@ -62,10 +76,13 @@ class _BottomsheetAddState extends State<BottomsheetAdd> {
                 },
                 color: colorWhite,
                 itemBuilder: (BuildContext context) {
-                  return Constants.categories.map((category) {
+                  return context
+                      .read<ProviderExpense>()
+                      .listOfCategories
+                      .map((category) {
                     return PopupMenuItem(
-                      value: category.name,
-                      child: customCaption(category.name),
+                      value: category.category,
+                      child: customCaption(category.category),
                     );
                   }).toList();
                 },
@@ -74,47 +91,65 @@ class _BottomsheetAddState extends State<BottomsheetAdd> {
                     widthFactor: 1,
                     radius: 30,
                     onClick: null,
-                    color: Constants.categories[0].color,
-                    icon: Constants.categories[0].icon,
+                    color: Constants.categories.entries
+                        .firstWhere(
+                            (element) => element.key == _selectedCategory)
+                        .value["color"],
+                    icon: Constants.categories.entries
+                        .firstWhere(
+                            (element) => element.key == _selectedCategory)
+                        .value["icon"],
                     trailingIcon: Icons.keyboard_arrow_down),
               ),
             ),
           ],
         ),
-        customCaption("Expenses"),
-        customSubHeader(_expense),
+        customCaption("Paid"),
+        customSubHeader(_paid),
         Expanded(
-          child: KeypadScreen(onKeyPressed: (action) {
+          child: KeypadScreen(onKeyPressed: (action) async {
             if (action == "backspace") {
               setState(() {
-                _expense = _expense.substring(0, _expense.length - 1);
+                _paid = _paid.substring(0, _paid.length - 1);
               });
             } else if (action == "confirm") {
-              // todo
+              if (!isTextPaidValid()) return;
+              await context.read<ProviderExpense>().updateCategoryPaid(
+                  _selectedMonth,
+                  _selectedCategory,
+                  double.parse(_paid.replaceAll("\$", "")));
+              await context
+                  .read<ProviderExpense>()
+                  .getAllCategories(_selectedMonth);
+              widget.onConfirm();
             } else if (action == ".") {
-              if (!_expense.contains(".") && _expense.isNotEmpty) {
+              if (!_paid.contains(".") && _paid.isNotEmpty) {
                 setState(() {
-                  _expense += action;
+                  _paid += action;
                 });
               }
             } else if (action == "\$" || action == "LL") {
-              if (!_expense.contains("\$") && !_expense.contains("LL")) {
+              if (!_paid.contains("\$") && !_paid.contains("LL")) {
                 setState(() {
-                  _expense = "$action$_expense";
+                  _paid = "$action$_paid";
                 });
               }
-            } else if (_expense.contains("0.0")) {
+            } else if (_paid.contains("0.0")) {
               setState(() {
-                _expense = action;
+                _paid = action;
               });
             } else {
               setState(() {
-                _expense += action;
+                _paid += action;
               });
             }
           }),
         ),
       ],
     );
+  }
+
+  bool isTextPaidValid() {
+    return _paid.isNotEmpty && _paid != "\$0.0";
   }
 }

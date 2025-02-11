@@ -1,11 +1,16 @@
-import 'package:flutter/material.dart';
-
 class ModelCategory {
-  Color color;
-  IconData icon;
-  String name;
-  double total;
-  double percentage;
+  final String category;
+  final String date;
+  final double budget;
+  final double paid;
 
-  ModelCategory(this.color, this.icon, this.name, this.total, this.percentage);
+  const ModelCategory(
+      {required this.category,
+      required this.date,
+      required this.budget,
+      required this.paid});
+
+  Map<String, dynamic> toMap() {
+    return {'category': category, 'date': date, 'budget': budget, 'paid': paid};
+  }
 }

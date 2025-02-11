@@ -1,12 +1,14 @@
 import 'package:expense_tracker/feature_expense/components/barchart.dart';
 import 'package:expense_tracker/feature_expense/components/item_analytics_per.dart';
 import 'package:expense_tracker/feature_expense/components/item_category.dart';
+import 'package:expense_tracker/feature_expense/state/provider_expense.dart';
 import 'package:expense_tracker/feature_global/components/custom_button.dart';
 import 'package:expense_tracker/feature_global/components/custom_text.dart';
 import 'package:expense_tracker/feature_global/util/color.dart';
 import 'package:expense_tracker/feature_global/util/constants.dart';
 import 'package:expense_tracker/feature_global/util/helper_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ScreenHome extends StatefulWidget {
   const ScreenHome({super.key});
@@ -16,8 +18,22 @@ class ScreenHome extends StatefulWidget {
 }
 
 class _ScreenHomeState extends State<ScreenHome> {
-  String _selectedMonth = Constants.months[0];
   int _selectedBottomNavItem = 0;
+
+  @override
+  void initState() {
+    super.initState();
+
+    initializeMonthsAndCategories();
+  }
+
+  void initializeMonthsAndCategories() async {
+    await context.read<ProviderExpense>().addMonth();
+    await context.read<ProviderExpense>().getAllMonths();
+    await context
+        .read<ProviderExpense>()
+        .getAllCategories(context.read<ProviderExpense>().selectedMonth);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,8 +47,11 @@ class _ScreenHomeState extends State<ScreenHome> {
             _selectedBottomNavItem = index;
           });
           if (index == 1) {
-            HelperDialog.showBottomSheet(
-                context, "Do you want to delete", () {});
+            HelperDialog.showBottomSheet(context, "Do you want to delete", () {
+              setState(() {
+                _selectedBottomNavItem = 0;
+              });
+            });
           }
         },
         items: const <BottomNavigationBarItem>[
@@ -84,29 +103,47 @@ class _ScreenHomeState extends State<ScreenHome> {
                       color: colorBlack,
                       onClick: () {}),
                 ),
-                Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: colorGrey,
-                      borderRadius: BorderRadius.circular(20),
+                if (context.watch<ProviderExpense>().listOfMonths.length > 1)
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: colorGrey,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: DropdownButton(
+                          alignment: Alignment.center,
+                          dropdownColor: colorWhite,
+                          underline: const SizedBox(),
+                          value: context.watch<ProviderExpense>().selectedMonth,
+                          items: context
+                              .read<ProviderExpense>()
+                              .listOfMonths
+                              .map((month) {
+                            return DropdownMenuItem(
+                                value: month.date,
+                                child: customCaption(month.date));
+                          }).toList(),
+                          onChanged: (month) {
+                            context
+                                .read<ProviderExpense>()
+                                .changeSelectedMonth(month.toString());
+                            context
+                                .read<ProviderExpense>()
+                                .getAllCategories(month.toString());
+                          }),
                     ),
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: DropdownButton(
-                        alignment: Alignment.center,
-                        dropdownColor: colorWhite,
-                        underline: const SizedBox(),
-                        value: _selectedMonth,
-                        items: Constants.months.map((month) {
-                          return DropdownMenuItem(
-                              value: month, child: customCaption(month));
-                        }).toList(),
-                        onChanged: (month) {
-                          setState(() {
-                            _selectedMonth = month.toString();
-                          });
-                        }),
                   ),
-                ),
+                if (context.watch<ProviderExpense>().listOfMonths.length <= 1)
+                  Expanded(
+                    child: customButton(
+                        text: context.watch<ProviderExpense>().selectedMonth,
+                        widthFactor: 1,
+                        radius: 20,
+                        color: colorGrey,
+                        textColor: colorBlack,
+                        onClick: () {}),
+                  ),
               ],
             ),
             const SizedBox(
@@ -135,9 +172,12 @@ class _ScreenHomeState extends State<ScreenHome> {
   }
 
   List<Widget> categories() {
-    return Constants.categories.map((category) {
-      return itemCategory(
-          category.color, category.name, category.total, 500, category.icon);
+    return context.watch<ProviderExpense>().listOfCategories.map((category) {
+      MapEntry<String, Map<String, dynamic>> categoryItem = Constants
+          .categories.entries
+          .firstWhere((element) => element.key == category.category);
+      return itemCategory(categoryItem.value["color"], category.category,
+          category.paid, category.budget, categoryItem.value["icon"]);
     }).toList();
   }
 }

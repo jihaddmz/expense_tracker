@@ -85,18 +85,19 @@ class HelperDialog {
   }
 
   static void showBottomSheet(
-      BuildContext context, String text, VoidCallback onYesClick) {
-    showModalBottomSheet(
+      BuildContext context, String text, Function() onConfirm) {
+    showModalBottomSheet<Widget>(
         context: context,
         showDragHandle: true,
         isScrollControlled: true,
+        isDismissible: true,
         backgroundColor: colorWhite,
         builder: (BuildContext context) {
           return Container(
             height: MediaQuery.of(context).size.height * 0.8,
-            child: const Padding(
-              padding: EdgeInsets.all(16),
-              child: BottomsheetAdd(),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: BottomsheetAdd(onConfirm), // Replace 'someArgument' with the actual argument needed
             ),
           );
         });

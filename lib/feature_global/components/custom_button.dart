@@ -6,7 +6,8 @@ Widget customButton(
     required double widthFactor,
     required VoidCallback onClick,
     double radius = 20,
-    Color color = colorGrey}) {
+    Color color = colorGrey,
+    Color textColor = colorWhite}) {
   return FractionallySizedBox(
     widthFactor: widthFactor,
     child: ElevatedButton(
@@ -16,7 +17,7 @@ Widget customButton(
             fontWeight: FontWeight.w900,
           ),
           backgroundColor: color,
-          foregroundColor: Colors.white,
+          foregroundColor: textColor,
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(radius))),
       child: Padding(
