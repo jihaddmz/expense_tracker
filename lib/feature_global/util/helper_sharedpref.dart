@@ -1,37 +1,32 @@
+import 'package:expense_tracker/feature_global/util/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HelperSharedPref {
-  static late SharedPreferences _prefs;
+  static late SharedPreferences instance;
 
   static Future<void> setInstance() async {
-    _prefs = await SharedPreferences.getInstance();
+    instance = await SharedPreferences.getInstance();
   }
 
-  static Future<void> setName(String name) async {
-    await _prefs.setString("name", name);
+  static Future<void> setDolarRate(int rate) async {
+    await instance.setInt("dolar_rate", rate);
   }
 
-  static String getName() {
-    return _prefs.getString("name") ?? "";
+  static Future<int> getDolarRate() async {
+    return instance.getInt("dolar_rate") ?? 0;
   }
 
-  static Future<void> setEmail(String email) async {
-    await _prefs.setString("email", email);
+  static Future<void> setCategoriesBudget() async {
+    for (var entry in Constants.categories.entries) {
+      await instance.setDouble(entry.key, 70);
+    }
   }
 
-  static String getEmail() {
-    return _prefs.getString("email") ?? "";
+  static Future<void> setCategoryBudget(String category, double budget) async {
+    await instance.setDouble(category, budget);
   }
 
-  static Future<void> setIsSignedUp(bool signedUp) async {
-    await _prefs.setBool("isSignedUp", signedUp);
-  }
-
-  static bool isSignedUp() {
-    return _prefs.getBool("isSignedUp") ?? false;
-  }
-
-  static Future<void> clear() async {
-    await _prefs.clear();
+  static double getCategoryBudget(String category) {
+    return instance.getDouble(category) ?? 70;
   }
 }

@@ -72,4 +72,11 @@ class RepositoryExpense {
           paid: result.first['paid'] as double);
     }
   }
+
+  static Future<void> updateCategoryBudget(
+      ModelCategory modelCategory, double budget) async {
+    await SqliteDatabase.instance.rawUpdate(
+        "update tbl_categories set budget = ? where category = ? and date = ?",
+        [budget, modelCategory.category, modelCategory.date]);
+  }
 }

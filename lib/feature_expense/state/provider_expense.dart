@@ -2,6 +2,7 @@ import 'package:expense_tracker/feature_expense/data/repo.dart';
 import 'package:expense_tracker/feature_expense/model/model_category.dart';
 import 'package:expense_tracker/feature_expense/model/model_month.dart';
 import 'package:expense_tracker/feature_global/util/constants.dart';
+import 'package:expense_tracker/feature_global/util/helper_sharedpref.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -28,7 +29,7 @@ class ProviderExpense extends ChangeNotifier {
         await RepositoryExpense.insertMonth(ModelMonth(date: formattedDate));
         for (var item in Constants.categories.entries) {
           await insertCategory(ModelCategory(
-              category: item.key, date: formattedDate, budget: 100, paid: 0));
+              category: item.key, date: formattedDate, budget: HelperSharedPref.getCategoryBudget(item.key), paid: 0));
         }
       }
     });
@@ -41,6 +42,7 @@ class ProviderExpense extends ChangeNotifier {
 
   Future<void> getAllCategories(String date) async {
     listOfCategories = await RepositoryExpense.getAllCategories(date);
+    listOfCategories.sort((a, b) => b.paid.compareTo(a.paid));
     expensesByMonth = getAllExpensesByMonth();
     notifyListeners();
   }
@@ -66,5 +68,13 @@ class ProviderExpense extends ChangeNotifier {
       total += item.paid;
     }
     return total;
+  }
+
+  Future<void> updateCategoryBudget(String category, double budget) async {
+    ModelCategory? modelCategory =
+        listOfCategories.firstWhere((element) => element.category == category);
+    await RepositoryExpense.updateCategoryBudget(modelCategory, budget);
+    await HelperSharedPref.setCategoryBudget(category, budget);
+    await getAllCategories(selectedMonth);
   }
 }

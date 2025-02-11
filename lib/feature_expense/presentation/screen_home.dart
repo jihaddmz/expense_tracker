@@ -19,6 +19,7 @@ class ScreenHome extends StatefulWidget {
 
 class _ScreenHomeState extends State<ScreenHome> {
   int _selectedBottomNavItem = 0;
+  final TextEditingController _controllerBudget = TextEditingController();
 
   @override
   void initState() {
@@ -186,7 +187,42 @@ class _ScreenHomeState extends State<ScreenHome> {
           .categories.entries
           .firstWhere((element) => element.key == category.category);
       return itemCategory(categoryItem.value["color"], category.category,
-          category.paid, category.budget, categoryItem.value["icon"]);
+          category.paid, category.budget, categoryItem.value["icon"], () {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                backgroundColor: colorWhite,
+                content: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text("Set the budget for ${category.category}"),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: TextField(
+                        controller: _controllerBudget,
+                        decoration:
+                            const InputDecoration(label: Text("Budget")),
+                        keyboardType: TextInputType.number,
+                      ),
+                    ),
+                    customButton(
+                        onClick: () async {
+                          await context
+                              .read<ProviderExpense>()
+                              .updateCategoryBudget(category.category,
+                                  double.parse(_controllerBudget.text));
+                          _controllerBudget.clear();
+                          Navigator.pop(context);
+                        },
+                        text: "Set",
+                        textColor: colorBlack,
+                        widthFactor: 1)
+                  ],
+                ),
+              );
+            });
+      });
     }).toList();
   }
 }
