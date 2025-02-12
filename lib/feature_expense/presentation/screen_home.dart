@@ -1,12 +1,12 @@
 import 'package:expense_tracker/feature_expense/components/barchart.dart';
 import 'package:expense_tracker/feature_expense/components/item_analytics_per.dart';
 import 'package:expense_tracker/feature_expense/components/item_category.dart';
-import 'package:expense_tracker/feature_expense/state/provider_expense.dart';
-import 'package:expense_tracker/feature_global/components/custom_button.dart';
-import 'package:expense_tracker/feature_global/components/custom_text.dart';
-import 'package:expense_tracker/feature_global/util/color.dart';
-import 'package:expense_tracker/feature_global/util/constants.dart';
-import 'package:expense_tracker/feature_global/util/helper_dialog.dart';
+import 'package:expense_tracker/feature_expense/presentation/provider/provider_home.dart';
+import 'package:expense_tracker/core/components/custom_button.dart';
+import 'package:expense_tracker/core/components/custom_text.dart';
+import 'package:expense_tracker/core/config/color.dart';
+import 'package:expense_tracker/core/config/constants.dart';
+import 'package:expense_tracker/core/helpers/helper_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -29,11 +29,11 @@ class _ScreenHomeState extends State<ScreenHome> {
   }
 
   void initializeMonthsAndCategories() async {
-    await context.read<ProviderExpense>().addMonth();
-    await context.read<ProviderExpense>().getAllMonths();
+    await context.read<ProviderHome>().addMonth();
+    await context.read<ProviderHome>().getAllMonths();
     await context
-        .read<ProviderExpense>()
-        .getAllCategories(context.read<ProviderExpense>().selectedMonth);
+        .read<ProviderHome>()
+        .getAllCategories(context.read<ProviderHome>().selectedMonth);
   }
 
   @override
@@ -108,7 +108,7 @@ class _ScreenHomeState extends State<ScreenHome> {
                         color: colorBlack,
                         onClick: () {}),
                   ),
-                  if (context.watch<ProviderExpense>().listOfMonths.length > 1)
+                  if (context.watch<ProviderHome>().listOfMonths.length > 1)
                     Expanded(
                       child: Container(
                         decoration: BoxDecoration(
@@ -120,10 +120,9 @@ class _ScreenHomeState extends State<ScreenHome> {
                             alignment: Alignment.center,
                             dropdownColor: colorWhite,
                             underline: const SizedBox(),
-                            value:
-                                context.watch<ProviderExpense>().selectedMonth,
+                            value: context.watch<ProviderHome>().selectedMonth,
                             items: context
-                                .read<ProviderExpense>()
+                                .read<ProviderHome>()
                                 .listOfMonths
                                 .map((month) {
                               return DropdownMenuItem(
@@ -132,18 +131,18 @@ class _ScreenHomeState extends State<ScreenHome> {
                             }).toList(),
                             onChanged: (month) {
                               context
-                                  .read<ProviderExpense>()
+                                  .read<ProviderHome>()
                                   .changeSelectedMonth(month.toString());
                               context
-                                  .read<ProviderExpense>()
+                                  .read<ProviderHome>()
                                   .getAllCategories(month.toString());
                             }),
                       ),
                     ),
-                  if (context.watch<ProviderExpense>().listOfMonths.length <= 1)
+                  if (context.watch<ProviderHome>().listOfMonths.length <= 1)
                     Expanded(
                       child: customButton(
-                          text: context.watch<ProviderExpense>().selectedMonth,
+                          text: context.watch<ProviderHome>().selectedMonth,
                           widthFactor: 1,
                           radius: 20,
                           color: colorGrey,
@@ -164,16 +163,14 @@ class _ScreenHomeState extends State<ScreenHome> {
               child: Row(
                 children: [
                   Expanded(
-                      child: itemAnalyticsPer(
-                          "Day",
-                          context.read<ProviderExpense>().expensesByMonth /
-                              30)),
+                      child: itemAnalyticsPer("Day",
+                          context.read<ProviderHome>().expensesByMonth / 30)),
                   Expanded(
                       child: itemAnalyticsPer("Week",
-                          context.read<ProviderExpense>().expensesByMonth / 4)),
+                          context.read<ProviderHome>().expensesByMonth / 4)),
                   Expanded(
                       child: itemAnalyticsPer("Month",
-                          context.read<ProviderExpense>().expensesByMonth)),
+                          context.read<ProviderHome>().expensesByMonth)),
                 ],
               ),
             ),
@@ -187,7 +184,7 @@ class _ScreenHomeState extends State<ScreenHome> {
   }
 
   List<Widget> categories() {
-    return context.watch<ProviderExpense>().listOfCategories.map((category) {
+    return context.watch<ProviderHome>().listOfCategories.map((category) {
       MapEntry<String, Map<String, dynamic>> categoryItem = Constants
           .categories.entries
           .firstWhere((element) => element.key == category.category);
@@ -214,7 +211,7 @@ class _ScreenHomeState extends State<ScreenHome> {
                     customButton(
                         onClick: () async {
                           await context
-                              .read<ProviderExpense>()
+                              .read<ProviderHome>()
                               .updateCategoryBudget(category.category,
                                   double.parse(_controllerBudget.text));
                           _controllerBudget.clear();

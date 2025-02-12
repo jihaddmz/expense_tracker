@@ -1,6 +1,6 @@
-import 'package:expense_tracker/feature_expense/data/sqlite_database.dart';
-import 'package:expense_tracker/feature_expense/model/model_category.dart';
-import 'package:expense_tracker/feature_expense/model/model_month.dart';
+import 'package:expense_tracker/feature_expense/data/local/sqlite_database.dart';
+import 'package:expense_tracker/feature_expense/domain/model/model_category.dart';
+import 'package:expense_tracker/feature_expense/domain/model/model_month.dart';
 import 'package:sqflite/sqflite.dart';
 
 class RepositoryExpense {

@@ -1,5 +1,5 @@
-import 'package:expense_tracker/feature_global/components/custom_text.dart';
-import 'package:expense_tracker/feature_global/util/color.dart';
+import 'package:expense_tracker/core/components/custom_text.dart';
+import 'package:expense_tracker/core/config/color.dart';
 import 'package:flutter/material.dart';
 
 Widget itemCategory(Color backgroundColor, String categoryName, double amount,

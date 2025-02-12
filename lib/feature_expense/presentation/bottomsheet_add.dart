@@ -1,9 +1,9 @@
 import 'package:expense_tracker/feature_expense/components/keypad.dart';
-import 'package:expense_tracker/feature_expense/state/provider_expense.dart';
-import 'package:expense_tracker/feature_global/components/custom_button.dart';
-import 'package:expense_tracker/feature_global/components/custom_text.dart';
-import 'package:expense_tracker/feature_global/util/color.dart';
-import 'package:expense_tracker/feature_global/util/constants.dart';
+import 'package:expense_tracker/feature_expense/presentation/provider/provider_home.dart';
+import 'package:expense_tracker/core/components/custom_button.dart';
+import 'package:expense_tracker/core/components/custom_text.dart';
+import 'package:expense_tracker/core/config/color.dart';
+import 'package:expense_tracker/core/config/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -25,7 +25,7 @@ class _BottomsheetAddState extends State<BottomsheetAdd> {
   void initState() {
     super.initState();
 
-    _selectedMonth = context.read<ProviderExpense>().selectedMonth;
+    _selectedMonth = context.read<ProviderHome>().selectedMonth;
   }
 
   @override
@@ -47,10 +47,7 @@ class _BottomsheetAddState extends State<BottomsheetAdd> {
                 },
                 color: colorWhite,
                 itemBuilder: (BuildContext context) {
-                  return context
-                      .read<ProviderExpense>()
-                      .listOfMonths
-                      .map((month) {
+                  return context.read<ProviderHome>().listOfMonths.map((month) {
                     return PopupMenuItem(
                       value: month.date,
                       child: customCaption(month.date),
@@ -68,10 +65,8 @@ class _BottomsheetAddState extends State<BottomsheetAdd> {
             ),
             Expanded(
               child: PopupMenuButton(
-                initialValue: context
-                    .read<ProviderExpense>()
-                    .listOfCategories[0]
-                    .category,
+                initialValue:
+                    context.read<ProviderHome>().listOfCategories[0].category,
                 onSelected: (value) => {
                   setState(() {
                     _selectedCategory = value.toString();
@@ -80,7 +75,7 @@ class _BottomsheetAddState extends State<BottomsheetAdd> {
                 color: colorWhite,
                 itemBuilder: (BuildContext context) {
                   return context
-                      .read<ProviderExpense>()
+                      .read<ProviderHome>()
                       .listOfCategories
                       .map((category) {
                     return PopupMenuItem(
@@ -119,12 +114,12 @@ class _BottomsheetAddState extends State<BottomsheetAdd> {
               });
             } else if (action == "confirm") {
               if (!isTextPaidValid()) return;
-              await context.read<ProviderExpense>().updateCategoryPaid(
+              await context.read<ProviderHome>().updateCategoryPaid(
                   _selectedMonth,
                   _selectedCategory,
                   double.parse(_paid.replaceAll("\$", "")));
               await context
-                  .read<ProviderExpense>()
+                  .read<ProviderHome>()
                   .getAllCategories(_selectedMonth);
               setState(() {
                 _paid = "\$0.0";

@@ -1,5 +1,5 @@
 import 'package:expense_tracker/feature_expense/presentation/bottomsheet_add.dart';
-import 'package:expense_tracker/feature_global/util/color.dart';
+import 'package:expense_tracker/core/config/color.dart';
 import 'package:flutter/material.dart';
 
 import '../components/custom_button.dart';

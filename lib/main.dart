@@ -1,8 +1,8 @@
-import 'package:expense_tracker/feature_expense/data/sqlite_database.dart';
+import 'package:expense_tracker/feature_expense/data/local/sqlite_database.dart';
 import 'package:expense_tracker/feature_expense/presentation/screen_home.dart';
-import 'package:expense_tracker/feature_expense/state/provider_expense.dart';
-import 'package:expense_tracker/feature_global/util/color.dart';
-import 'package:expense_tracker/feature_global/util/helper_sharedpref.dart';
+import 'package:expense_tracker/feature_expense/presentation/provider/provider_home.dart';
+import 'package:expense_tracker/core/config/color.dart';
+import 'package:expense_tracker/core/helpers/helper_sharedpref.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -13,7 +13,7 @@ void main() async {
   await HelperSharedPref.setInstance();
   runApp(MultiProvider(
     providers: [
-      ChangeNotifierProvider(create: (context) => ProviderExpense()),
+      ChangeNotifierProvider(create: (context) => ProviderHome()),
     ],
     child: const MyApp(),
   ));

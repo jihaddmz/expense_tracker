@@ -1,12 +1,12 @@
-import 'package:expense_tracker/feature_expense/data/repo.dart';
-import 'package:expense_tracker/feature_expense/model/model_category.dart';
-import 'package:expense_tracker/feature_expense/model/model_month.dart';
-import 'package:expense_tracker/feature_global/util/constants.dart';
-import 'package:expense_tracker/feature_global/util/helper_sharedpref.dart';
+import 'package:expense_tracker/feature_expense/data/local/repo.dart';
+import 'package:expense_tracker/feature_expense/domain/model/model_category.dart';
+import 'package:expense_tracker/feature_expense/domain/model/model_month.dart';
+import 'package:expense_tracker/core/config/constants.dart';
+import 'package:expense_tracker/core/helpers/helper_sharedpref.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class ProviderExpense extends ChangeNotifier {
+class ProviderHome extends ChangeNotifier {
   List<ModelMonth> listOfMonths = [];
   List<ModelCategory> listOfCategories = [];
   late String selectedMonth;
@@ -20,9 +20,9 @@ class ProviderExpense extends ChangeNotifier {
   Future<void> addMonth() async {
     DateTime dateTime = DateTime.now();
     var formattedDate = DateFormat.yMMMM().format(dateTime);
-    var shrinkedDate = "${formattedDate.split(" ")[0].substring(0, 3)} ${formattedDate.split(" ")[1]}";
+    var shrinkedDate =
+        "${formattedDate.split(" ")[0].substring(0, 3)} ${formattedDate.split(" ")[1]}";
     changeSelectedMonth(shrinkedDate);
-
 
     await RepositoryExpense.getModelMonthByDate(shrinkedDate)
         .then((value) async {

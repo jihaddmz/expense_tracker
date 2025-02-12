@@ -1,4 +1,4 @@
-import 'package:expense_tracker/feature_global/util/constants.dart';
+import 'package:expense_tracker/core/config/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HelperSharedPref {
