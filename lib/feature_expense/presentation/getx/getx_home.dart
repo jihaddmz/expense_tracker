@@ -3,24 +3,22 @@ import 'package:expense_tracker/feature_expense/domain/model/model_category.dart
 import 'package:expense_tracker/feature_expense/domain/model/model_month.dart';
 import 'package:expense_tracker/core/config/constants.dart';
 import 'package:expense_tracker/core/helpers/helper_sharedpref.dart';
-import 'package:flutter/material.dart';
+import 'package:get/state_manager.dart';
 import 'package:intl/intl.dart';
 
-class ProviderHome extends ChangeNotifier {
-  List<ModelMonth> listOfMonths = [];
-  List<ModelCategory> listOfCategories = [];
-  late String selectedMonth;
-  double expensesByMonth = 0;
-  bool isLoading = false;
+class GetxHome extends GetxController {
+  var listOfMonths = <ModelMonth>[].obs;
+  var listOfCategories = <ModelCategory>[].obs;
+  var selectedMonth = "".obs;
+  var expensesByMonth = 0.0.obs;
+  var isLoading = false.obs;
 
   void changeSelectedMonth(String month) {
-    selectedMonth = month;
-    notifyListeners();
+    selectedMonth.value = month;
   }
 
   Future<void> addMonth() async {
-    isLoading = true;
-    notifyListeners();
+    isLoading.value = true;
 
     DateTime dateTime = DateTime.now();
     var formattedDate = DateFormat.yMMMM().format(dateTime);
@@ -43,20 +41,17 @@ class ProviderHome extends ChangeNotifier {
       }
     });
 
-    isLoading = false;
-    notifyListeners();
+    isLoading.value = false;
   }
 
   Future<void> getAllMonths() async {
-    listOfMonths = await RepositoryExpense.getAllMonths();
-    notifyListeners();
+    listOfMonths.value = await RepositoryExpense.getAllMonths();
   }
 
-  Future<void> getAllCategories(String date) async {
-    listOfCategories = await RepositoryExpense.getAllCategories(date);
+  Future<void> getAllCategories() async {
+    listOfCategories.value = await RepositoryExpense.getAllCategories(selectedMonth.value);
     listOfCategories.sort((a, b) => b.paid.compareTo(a.paid));
-    expensesByMonth = getAllExpensesByMonth();
-    notifyListeners();
+    expensesByMonth.value = getAllExpensesByMonth();
   }
 
   Future<void> insertCategory(ModelCategory modelCategory) async {
@@ -87,6 +82,6 @@ class ProviderHome extends ChangeNotifier {
         listOfCategories.firstWhere((element) => element.category == category);
     await RepositoryExpense.updateCategoryBudget(modelCategory, budget);
     await HelperSharedPref.setCategoryBudget(category, budget);
-    await getAllCategories(selectedMonth);
+    await getAllCategories();
   }
 }

@@ -1,11 +1,11 @@
 import 'package:expense_tracker/feature_expense/components/keypad.dart';
-import 'package:expense_tracker/feature_expense/presentation/provider/provider_home.dart';
+import 'package:expense_tracker/feature_expense/presentation/getx/getx_home.dart';
 import 'package:expense_tracker/core/components/custom_button.dart';
 import 'package:expense_tracker/core/components/custom_text.dart';
 import 'package:expense_tracker/core/config/color.dart';
 import 'package:expense_tracker/core/config/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 
 class BottomsheetAdd extends StatefulWidget {
   const BottomsheetAdd(this.onConfirm, {super.key});
@@ -20,12 +20,13 @@ class _BottomsheetAddState extends State<BottomsheetAdd> {
   String _paid = "\$0.0";
   String _selectedCategory = Constants.categories.entries.first.key;
   late String _selectedMonth;
+  final getxController = Get.find<GetxHome>();
 
   @override
   void initState() {
     super.initState();
 
-    _selectedMonth = context.read<ProviderHome>().selectedMonth;
+    _selectedMonth = getxController.selectedMonth.value;
   }
 
   @override
@@ -47,7 +48,7 @@ class _BottomsheetAddState extends State<BottomsheetAdd> {
                 },
                 color: colorWhite,
                 itemBuilder: (BuildContext context) {
-                  return context.read<ProviderHome>().listOfMonths.map((month) {
+                  return getxController.listOfMonths.map((month) {
                     return PopupMenuItem(
                       value: month.date,
                       child: customCaption(month.date),
@@ -66,7 +67,7 @@ class _BottomsheetAddState extends State<BottomsheetAdd> {
             Expanded(
               child: PopupMenuButton(
                 initialValue:
-                    context.read<ProviderHome>().listOfCategories[0].category,
+                    getxController.listOfCategories[0].category,
                 onSelected: (value) => {
                   setState(() {
                     _selectedCategory = value.toString();
@@ -74,8 +75,7 @@ class _BottomsheetAddState extends State<BottomsheetAdd> {
                 },
                 color: colorWhite,
                 itemBuilder: (BuildContext context) {
-                  return context
-                      .read<ProviderHome>()
+                  return getxController
                       .listOfCategories
                       .map((category) {
                     return PopupMenuItem(
@@ -114,13 +114,9 @@ class _BottomsheetAddState extends State<BottomsheetAdd> {
               });
             } else if (action == "confirm") {
               if (!isTextPaidValid()) return;
-              await context.read<ProviderHome>().updateCategoryPaid(
-                  _selectedMonth,
-                  _selectedCategory,
-                  double.parse(_paid.replaceAll("\$", "")));
-              await context
-                  .read<ProviderHome>()
-                  .getAllCategories(_selectedMonth);
+              await getxController.updateCategoryPaid(_selectedMonth,
+                  _selectedCategory, double.parse(_paid.replaceAll("\$", "")));
+              await getxController.getAllCategories();
               setState(() {
                 _paid = "\$0.0";
               });

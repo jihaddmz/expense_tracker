@@ -85,7 +85,7 @@ class HelperDialog {
   }
 
   static void showBottomSheet(
-      BuildContext context, String text, Function() onConfirm) {
+      BuildContext context, Function() onConfirm) {
     showModalBottomSheet<Widget>(
         context: context,
         showDragHandle: true,

@@ -1,14 +1,14 @@
 import 'package:expense_tracker/feature_expense/components/barchart.dart';
 import 'package:expense_tracker/feature_expense/components/item_analytics_per.dart';
 import 'package:expense_tracker/feature_expense/components/item_category.dart';
-import 'package:expense_tracker/feature_expense/presentation/provider/provider_home.dart';
+import 'package:expense_tracker/feature_expense/presentation/getx/getx_home.dart';
 import 'package:expense_tracker/core/components/custom_button.dart';
 import 'package:expense_tracker/core/components/custom_text.dart';
 import 'package:expense_tracker/core/config/color.dart';
 import 'package:expense_tracker/core/config/constants.dart';
 import 'package:expense_tracker/core/helpers/helper_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 
 class ScreenHome extends StatefulWidget {
   const ScreenHome({super.key});
@@ -20,6 +20,7 @@ class ScreenHome extends StatefulWidget {
 class _ScreenHomeState extends State<ScreenHome> {
   int _selectedBottomNavItem = 0;
   final TextEditingController _controllerBudget = TextEditingController();
+  final getxController = Get.put(GetxHome());
 
   @override
   void initState() {
@@ -29,11 +30,10 @@ class _ScreenHomeState extends State<ScreenHome> {
   }
 
   void initializeMonthsAndCategories() async {
-    await context.read<ProviderHome>().addMonth();
-    await context.read<ProviderHome>().getAllMonths();
-    await context
-        .read<ProviderHome>()
-        .getAllCategories(context.read<ProviderHome>().selectedMonth);
+    await getxController.addMonth();
+    await getxController.getAllMonths();
+    await getxController
+        .getAllCategories();
   }
 
   @override
@@ -48,7 +48,7 @@ class _ScreenHomeState extends State<ScreenHome> {
             _selectedBottomNavItem = index;
           });
           if (index == 1) {
-            HelperDialog.showBottomSheet(context, "Do you want to delete", () {
+            HelperDialog.showBottomSheet(context, () {
               setState(() {
                 _selectedBottomNavItem = 0;
                 Navigator.pop(context);
@@ -67,12 +67,15 @@ class _ScreenHomeState extends State<ScreenHome> {
           ),
         ],
       ),
-      body: context.watch<ProviderHome>().isLoading ? showLoader() : buildBody(),
+      body: Obx(() => getxController.isLoading.value ? buildLoader() : buildBody()) ,
     );
   }
 
-  Widget showLoader() {
-    return const Center(child: CircularProgressIndicator(color: colorBlack,));
+  Widget buildLoader() {
+    return const Center(
+        child: CircularProgressIndicator(
+      color: colorBlack,
+    ));
   }
 
   Widget buildBody() {
@@ -117,7 +120,7 @@ class _ScreenHomeState extends State<ScreenHome> {
                       color: colorBlack,
                       onClick: () {}),
                 ),
-                if (context.watch<ProviderHome>().listOfMonths.length > 1)
+                if (getxController.listOfMonths.length > 1)
                   Expanded(
                     child: Container(
                       decoration: BoxDecoration(
@@ -129,9 +132,8 @@ class _ScreenHomeState extends State<ScreenHome> {
                           alignment: Alignment.center,
                           dropdownColor: colorWhite,
                           underline: const SizedBox(),
-                          value: context.watch<ProviderHome>().selectedMonth,
-                          items: context
-                              .read<ProviderHome>()
+                          value: getxController.selectedMonth.value,
+                          items: getxController
                               .listOfMonths
                               .map((month) {
                             return DropdownMenuItem(
@@ -139,19 +141,17 @@ class _ScreenHomeState extends State<ScreenHome> {
                                 child: customCaption(month.date));
                           }).toList(),
                           onChanged: (month) {
-                            context
-                                .read<ProviderHome>()
+                            getxController
                                 .changeSelectedMonth(month.toString());
-                            context
-                                .read<ProviderHome>()
-                                .getAllCategories(month.toString());
+                            getxController
+                                .getAllCategories();
                           }),
                     ),
                   ),
-                if (context.watch<ProviderHome>().listOfMonths.length <= 1)
+                if (getxController.listOfMonths.length <= 1)
                   Expanded(
                     child: customButton(
-                        text: context.watch<ProviderHome>().selectedMonth,
+                        text: getxController.selectedMonth.value,
                         widthFactor: 1,
                         radius: 20,
                         color: colorGrey,
@@ -172,27 +172,27 @@ class _ScreenHomeState extends State<ScreenHome> {
             child: Row(
               children: [
                 Expanded(
-                    child: itemAnalyticsPer("Day",
-                        context.read<ProviderHome>().expensesByMonth / 30)),
-                Expanded(
-                    child: itemAnalyticsPer("Week",
-                        context.read<ProviderHome>().expensesByMonth / 4)),
+                    child: itemAnalyticsPer(
+                        "Day", getxController.expensesByMonth.value / 30)),
                 Expanded(
                     child: itemAnalyticsPer(
-                        "Month", context.read<ProviderHome>().expensesByMonth)),
+                        "Week", getxController.expensesByMonth.value / 4)),
+                Expanded(
+                    child: itemAnalyticsPer(
+                        "Month", getxController.expensesByMonth.value)),
               ],
             ),
           ),
           Column(
-            children: categories(),
+            children: buildCategories(),
           )
         ],
       ),
     );
   }
 
-  List<Widget> categories() {
-    return context.watch<ProviderHome>().listOfCategories.map((category) {
+  List<Widget> buildCategories() {
+    return getxController.listOfCategories.map((category) {
       MapEntry<String, Map<String, dynamic>> categoryItem = Constants
           .categories.entries
           .firstWhere((element) => element.key == category.category);
@@ -218,10 +218,9 @@ class _ScreenHomeState extends State<ScreenHome> {
                     ),
                     customButton(
                         onClick: () async {
-                          await context
-                              .read<ProviderHome>()
-                              .updateCategoryBudget(category.category,
-                                  double.parse(_controllerBudget.text));
+                          await getxController.updateCategoryBudget(
+                              category.category,
+                              double.parse(_controllerBudget.text));
                           _controllerBudget.clear();
                           Navigator.pop(context);
                         },
