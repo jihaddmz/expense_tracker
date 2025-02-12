@@ -19,14 +19,15 @@ class Constants {
     'December'
   ];
   static final Map<String, Map<String, dynamic>> categories = {
-    'Shopping': {'color': colorGreen, 'icon': Icons.shopping_cart},
-    'Food': {'color': colorBlue, 'icon': Icons.fastfood},
-    'Health': {'color': colorYellow, 'icon': Icons.local_hospital},
-    'Transport': {'color': colorTeal, 'icon': Icons.directions_car},
-    'House': {'color': colorOrange, 'icon': Icons.home},
-    'Utilities': {'color': colorPink, 'icon': Icons.phone_android},
-    'Entertainment': {'color': colorGreyDark, 'icon': Icons.local_movies},
-    'Gifts': {'color': colorLightPink, 'icon': Icons.card_giftcard},
-    'Car': {'color': colorPurple, 'icon': Icons.local_atm},
+    'Shopping': {'color': colorGreen, 'icon': Icons.shopping_cart_outlined},
+    'Food': {'color': colorBlue, 'icon': Icons.fastfood_outlined},
+    'Health': {'color': colorYellow, 'icon': Icons.local_hospital_outlined},
+    'Transport': {'color': colorTeal, 'icon': Icons.directions_bus_outlined},
+    'Home': {'color': colorOrange, 'icon': Icons.home_outlined},
+    'Utilities': {'color': colorPink, 'icon': Icons.phone_android_outlined},
+    'Activities': {'color': colorGrey, 'icon': Icons.local_movies_outlined},
+    'Gifts': {'color': colorLightPink, 'icon': Icons.card_giftcard_outlined},
+    'Help': {'color': colorGreen, 'icon': Icons.help_outline},
+    'Car': {'color': colorPurple, 'icon': Icons.directions_car_outlined},
   };
 }

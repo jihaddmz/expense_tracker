@@ -95,58 +95,63 @@ class _ScreenHomeState extends State<ScreenHome> {
                 ),
               ],
             ),
-            Row(
-              children: [
-                Expanded(
-                  child: customButton(
-                      text: "Expenses",
-                      widthFactor: 1,
-                      radius: 20,
-                      color: colorBlack,
-                      onClick: () {}),
-                ),
-                if (context.watch<ProviderExpense>().listOfMonths.length > 1)
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: colorGrey,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: DropdownButton(
-                          alignment: Alignment.center,
-                          dropdownColor: colorWhite,
-                          underline: const SizedBox(),
-                          value: context.watch<ProviderExpense>().selectedMonth,
-                          items: context
-                              .read<ProviderExpense>()
-                              .listOfMonths
-                              .map((month) {
-                            return DropdownMenuItem(
-                                value: month.date,
-                                child: customCaption(month.date));
-                          }).toList(),
-                          onChanged: (month) {
-                            context
-                                .read<ProviderExpense>()
-                                .changeSelectedMonth(month.toString());
-                            context
-                                .read<ProviderExpense>()
-                                .getAllCategories(month.toString());
-                          }),
-                    ),
-                  ),
-                if (context.watch<ProviderExpense>().listOfMonths.length <= 1)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Row(
+                spacing: 5,
+                children: [
                   Expanded(
                     child: customButton(
-                        text: context.watch<ProviderExpense>().selectedMonth,
+                        text: "Expenses",
                         widthFactor: 1,
                         radius: 20,
-                        color: colorGrey,
-                        textColor: colorBlack,
+                        color: colorBlack,
                         onClick: () {}),
                   ),
-              ],
+                  if (context.watch<ProviderExpense>().listOfMonths.length > 1)
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: colorGrey,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: DropdownButton(
+                            alignment: Alignment.center,
+                            dropdownColor: colorWhite,
+                            underline: const SizedBox(),
+                            value:
+                                context.watch<ProviderExpense>().selectedMonth,
+                            items: context
+                                .read<ProviderExpense>()
+                                .listOfMonths
+                                .map((month) {
+                              return DropdownMenuItem(
+                                  value: month.date,
+                                  child: customCaption(month.date));
+                            }).toList(),
+                            onChanged: (month) {
+                              context
+                                  .read<ProviderExpense>()
+                                  .changeSelectedMonth(month.toString());
+                              context
+                                  .read<ProviderExpense>()
+                                  .getAllCategories(month.toString());
+                            }),
+                      ),
+                    ),
+                  if (context.watch<ProviderExpense>().listOfMonths.length <= 1)
+                    Expanded(
+                      child: customButton(
+                          text: context.watch<ProviderExpense>().selectedMonth,
+                          widthFactor: 1,
+                          radius: 20,
+                          color: colorGrey,
+                          textColor: colorBlack,
+                          onClick: () {}),
+                    ),
+                ],
+              ),
             ),
             const SizedBox(
               height: 200,
