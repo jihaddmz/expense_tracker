@@ -9,7 +9,7 @@ import 'package:intl/intl.dart';
 class ProviderExpense extends ChangeNotifier {
   List<ModelMonth> listOfMonths = [];
   List<ModelCategory> listOfCategories = [];
-  String selectedMonth = Constants.months[0];
+  late String selectedMonth;
   double expensesByMonth = 0;
 
   void changeSelectedMonth(String month) {
@@ -20,16 +20,21 @@ class ProviderExpense extends ChangeNotifier {
   Future<void> addMonth() async {
     DateTime dateTime = DateTime.now();
     var formattedDate = DateFormat.yMMMM().format(dateTime);
-    changeSelectedMonth(formattedDate);
+    var shrinkedDate = "${formattedDate.split(" ")[0].substring(0, 3)} ${formattedDate.split(" ")[1]}";
+    changeSelectedMonth(shrinkedDate);
 
-    await RepositoryExpense.getModelMonthByDate(formattedDate)
+
+    await RepositoryExpense.getModelMonthByDate(shrinkedDate)
         .then((value) async {
       if (value == null) {
         // this month hasn't been added before, so add it to the database
-        await RepositoryExpense.insertMonth(ModelMonth(date: formattedDate));
+        await RepositoryExpense.insertMonth(ModelMonth(date: shrinkedDate));
         for (var item in Constants.categories.entries) {
           await insertCategory(ModelCategory(
-              category: item.key, date: formattedDate, budget: HelperSharedPref.getCategoryBudget(item.key), paid: 0));
+              category: item.key,
+              date: shrinkedDate,
+              budget: HelperSharedPref.getCategoryBudget(item.key),
+              paid: 0));
         }
       }
     });

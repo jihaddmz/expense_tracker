@@ -35,7 +35,7 @@ class _BottomsheetAddState extends State<BottomsheetAdd> {
       spacing: 20,
       children: [
         Row(
-          spacing: 10,
+          spacing: 5,
           children: [
             Expanded(
               child: PopupMenuButton(

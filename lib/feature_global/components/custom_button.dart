@@ -53,22 +53,17 @@ Widget customButtonForPopupMenu(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 15),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.max,
             children: [
               Icon(
                 icon,
                 color: colorBlack,
               ),
-              const SizedBox(
-                width: 5,
-              ),
               Flexible(
                   child: Text(
                 text,
               )),
-              const SizedBox(
-                width: 9,
-              ),
               Icon(
                 trailingIcon,
                 color: colorBlack,
