@@ -67,118 +67,126 @@ class _ScreenHomeState extends State<ScreenHome> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          spacing: 20,
-          children: [
-            Column(
-              children: [
-                Center(
-                  child: customSubHeader("\$32,000"),
-                ),
-                Center(
-                  child: GestureDetector(
-                    onTap: () {
-                      // todo : implement onTap
-                    },
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        customCaption("Total Balance"),
-                        const Icon(
-                          Icons.keyboard_arrow_down,
-                          color: colorGreyDark,
-                        )
-                      ],
-                    ),
+      body: context.watch<ProviderHome>().isLoading ? showLoader() : buildBody(),
+    );
+  }
+
+  Widget showLoader() {
+    return const Center(child: CircularProgressIndicator(color: colorBlack,));
+  }
+
+  Widget buildBody() {
+    return SingleChildScrollView(
+      child: Column(
+        spacing: 20,
+        children: [
+          Column(
+            children: [
+              Center(
+                child: customSubHeader("\$32,000"),
+              ),
+              Center(
+                child: GestureDetector(
+                  onTap: () {
+                    // todo : implement onTap
+                  },
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      customCaption("Total Balance"),
+                      const Icon(
+                        Icons.keyboard_arrow_down,
+                        color: colorGreyDark,
+                      )
+                    ],
                   ),
                 ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Row(
-                spacing: 5,
-                children: [
+              ),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Row(
+              spacing: 5,
+              children: [
+                Expanded(
+                  child: customButton(
+                      text: "Expenses",
+                      widthFactor: 1,
+                      radius: 20,
+                      color: colorBlack,
+                      onClick: () {}),
+                ),
+                if (context.watch<ProviderHome>().listOfMonths.length > 1)
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: colorGrey,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: DropdownButton(
+                          alignment: Alignment.center,
+                          dropdownColor: colorWhite,
+                          underline: const SizedBox(),
+                          value: context.watch<ProviderHome>().selectedMonth,
+                          items: context
+                              .read<ProviderHome>()
+                              .listOfMonths
+                              .map((month) {
+                            return DropdownMenuItem(
+                                value: month.date,
+                                child: customCaption(month.date));
+                          }).toList(),
+                          onChanged: (month) {
+                            context
+                                .read<ProviderHome>()
+                                .changeSelectedMonth(month.toString());
+                            context
+                                .read<ProviderHome>()
+                                .getAllCategories(month.toString());
+                          }),
+                    ),
+                  ),
+                if (context.watch<ProviderHome>().listOfMonths.length <= 1)
                   Expanded(
                     child: customButton(
-                        text: "Expenses",
+                        text: context.watch<ProviderHome>().selectedMonth,
                         widthFactor: 1,
                         radius: 20,
-                        color: colorBlack,
+                        color: colorGrey,
+                        textColor: colorBlack,
                         onClick: () {}),
                   ),
-                  if (context.watch<ProviderHome>().listOfMonths.length > 1)
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: colorGrey,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: DropdownButton(
-                            alignment: Alignment.center,
-                            dropdownColor: colorWhite,
-                            underline: const SizedBox(),
-                            value: context.watch<ProviderHome>().selectedMonth,
-                            items: context
-                                .read<ProviderHome>()
-                                .listOfMonths
-                                .map((month) {
-                              return DropdownMenuItem(
-                                  value: month.date,
-                                  child: customCaption(month.date));
-                            }).toList(),
-                            onChanged: (month) {
-                              context
-                                  .read<ProviderHome>()
-                                  .changeSelectedMonth(month.toString());
-                              context
-                                  .read<ProviderHome>()
-                                  .getAllCategories(month.toString());
-                            }),
-                      ),
-                    ),
-                  if (context.watch<ProviderHome>().listOfMonths.length <= 1)
-                    Expanded(
-                      child: customButton(
-                          text: context.watch<ProviderHome>().selectedMonth,
-                          widthFactor: 1,
-                          radius: 20,
-                          color: colorGrey,
-                          textColor: colorBlack,
-                          onClick: () {}),
-                    ),
-                ],
-              ),
+              ],
             ),
-            const SizedBox(
-              height: 200,
-              child: CustomBarChart(
-                listOfPercentage: [8, 22, 4, 20, 56, 100, 70],
-              ),
+          ),
+          const SizedBox(
+            height: 200,
+            child: CustomBarChart(
+              listOfPercentage: [8, 22, 4, 20, 56, 100, 70],
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  Expanded(
-                      child: itemAnalyticsPer("Day",
-                          context.read<ProviderHome>().expensesByMonth / 30)),
-                  Expanded(
-                      child: itemAnalyticsPer("Week",
-                          context.read<ProviderHome>().expensesByMonth / 4)),
-                  Expanded(
-                      child: itemAnalyticsPer("Month",
-                          context.read<ProviderHome>().expensesByMonth)),
-                ],
-              ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Expanded(
+                    child: itemAnalyticsPer("Day",
+                        context.read<ProviderHome>().expensesByMonth / 30)),
+                Expanded(
+                    child: itemAnalyticsPer("Week",
+                        context.read<ProviderHome>().expensesByMonth / 4)),
+                Expanded(
+                    child: itemAnalyticsPer(
+                        "Month", context.read<ProviderHome>().expensesByMonth)),
+              ],
             ),
-            Column(
-              children: categories(),
-            )
-          ],
-        ),
+          ),
+          Column(
+            children: categories(),
+          )
+        ],
       ),
     );
   }

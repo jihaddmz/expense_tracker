@@ -11,6 +11,7 @@ class ProviderHome extends ChangeNotifier {
   List<ModelCategory> listOfCategories = [];
   late String selectedMonth;
   double expensesByMonth = 0;
+  bool isLoading = false;
 
   void changeSelectedMonth(String month) {
     selectedMonth = month;
@@ -18,6 +19,9 @@ class ProviderHome extends ChangeNotifier {
   }
 
   Future<void> addMonth() async {
+    isLoading = true;
+    notifyListeners();
+
     DateTime dateTime = DateTime.now();
     var formattedDate = DateFormat.yMMMM().format(dateTime);
     var shrinkedDate =
@@ -38,6 +42,9 @@ class ProviderHome extends ChangeNotifier {
         }
       }
     });
+
+    isLoading = false;
+    notifyListeners();
   }
 
   Future<void> getAllMonths() async {
