@@ -26,7 +26,9 @@ Widget itemCategory(Color backgroundColor, String categoryName, double amount,
               alignment: Alignment.topRight,
               child: Column(
                 children: [
-                  customSubHeader("\$${amount.toStringAsFixed(2)}"),
+                  customSubHeader("\$${amount.toStringAsFixed(2)}",
+                      textColor:
+                          amount > totalAmount ? Colors.red : colorBlack),
                   const SizedBox(
                     height: 5,
                   ),

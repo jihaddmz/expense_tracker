@@ -17,11 +17,11 @@ Widget customHeader(String text, {TextAlign align = TextAlign.start}) {
   );
 }
 
-Widget customSubHeader(String text, {TextAlign align = TextAlign.start}) {
+Widget customSubHeader(String text, {TextAlign align = TextAlign.start, Color textColor = colorBlack}) {
   return Text(
     text,
     textAlign: align,
-    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: textColor),
   );
 }
 
