@@ -1,10 +1,12 @@
+import 'package:expense_tracker/core/data/local/entities/entity_category.dart';
+
 class ModelCategory {
   final String category;
   final String date;
-  final double budget;
-  final double paid;
-
-  const ModelCategory(
+  double budget;
+  double paid;
+  
+   ModelCategory(
       {required this.category,
       required this.date,
       required this.budget,
@@ -12,5 +14,9 @@ class ModelCategory {
 
   Map<String, dynamic> toMap() {
     return {'category': category, 'date': date, 'budget': budget, 'paid': paid};
+  }
+
+  EntityCategory toEntity() {
+    return EntityCategory(category: category, date: date, budget: budget, paid: paid);
   }
 }

@@ -1,4 +1,4 @@
-import 'package:expense_tracker/feature_expense/data/local/sqlite_database.dart';
+import 'package:expense_tracker/core/injection_container.dart';
 import 'package:expense_tracker/feature_expense/presentation/screen_home.dart';
 import 'package:expense_tracker/core/config/color.dart';
 import 'package:expense_tracker/core/helpers/helper_sharedpref.dart';
@@ -7,8 +7,8 @@ import 'package:flutter/services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await SqliteDatabase.createDatabase();
   await HelperSharedPref.setInstance();
+  await initializeDepdendencies();
   runApp(const MyApp());
 }
 

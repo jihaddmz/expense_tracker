@@ -1,4 +1,5 @@
-import 'package:expense_tracker/feature_expense/data/local/repo.dart';
+import 'package:expense_tracker/core/injection_container.dart';
+import 'package:expense_tracker/feature_expense/domain/repository/repo_expense.dart';
 import 'package:expense_tracker/feature_expense/domain/model/model_category.dart';
 import 'package:expense_tracker/feature_expense/domain/model/model_month.dart';
 import 'package:expense_tracker/core/config/constants.dart';
@@ -7,11 +8,17 @@ import 'package:get/state_manager.dart';
 import 'package:intl/intl.dart';
 
 class GetxHome extends GetxController {
+  late RepositoryExpense repositoryExpense;
+
   var listOfMonths = <ModelMonth>[].obs;
   var listOfCategories = <ModelCategory>[].obs;
   var selectedMonth = "".obs;
   var expensesByMonth = 0.0.obs;
   var isLoading = false.obs;
+
+  GetxHome() {
+    repositoryExpense = getIt();
+  }
 
   void changeSelectedMonth(String month) {
     selectedMonth.value = month;
@@ -26,11 +33,11 @@ class GetxHome extends GetxController {
         "${formattedDate.split(" ")[0].substring(0, 3)} ${formattedDate.split(" ")[1]}";
     changeSelectedMonth(shrinkedDate);
 
-    await RepositoryExpense.getModelMonthByDate(shrinkedDate)
+    await repositoryExpense.getModelMonthByDate(shrinkedDate)
         .then((value) async {
       if (value == null) {
         // this month hasn't been added before, so add it to the database
-        await RepositoryExpense.insertMonth(ModelMonth(date: shrinkedDate));
+        await repositoryExpense.insertMonth(ModelMonth(date: shrinkedDate));
         for (var item in Constants.categories.entries) {
           await insertCategory(ModelCategory(
               category: item.key,
@@ -45,28 +52,29 @@ class GetxHome extends GetxController {
   }
 
   Future<void> getAllMonths() async {
-    listOfMonths.value = await RepositoryExpense.getAllMonths();
+    listOfMonths.value = await repositoryExpense.getAllMonths();
   }
 
   Future<void> getAllCategories() async {
-    listOfCategories.value = await RepositoryExpense.getAllCategories(selectedMonth.value);
+    listOfCategories.value =
+        await repositoryExpense.getAllCategories(selectedMonth.value);
     listOfCategories.sort((a, b) => b.paid.compareTo(a.paid));
     expensesByMonth.value = getAllExpensesByMonth();
   }
 
   Future<void> insertCategory(ModelCategory modelCategory) async {
-    await RepositoryExpense.insertCategory(modelCategory);
+    await repositoryExpense.insertCategory(modelCategory);
   }
 
   Future<void> updateCategoryPaid(
       String date, String categoryName, double paid) async {
     ModelCategory? category =
-        await RepositoryExpense.getCategoryByDateAndCategory(
+        await repositoryExpense.getCategoryByDateAndCategory(
             date, categoryName);
     if (category == null) {
       return;
     }
-    await RepositoryExpense.updateCategoryPaid(category, category.paid + paid);
+    await repositoryExpense.updateCategoryPaid(category, category.paid + paid);
   }
 
   double getAllExpensesByMonth() {
@@ -80,7 +88,7 @@ class GetxHome extends GetxController {
   Future<void> updateCategoryBudget(String category, double budget) async {
     ModelCategory? modelCategory =
         listOfCategories.firstWhere((element) => element.category == category);
-    await RepositoryExpense.updateCategoryBudget(modelCategory, budget);
+    await repositoryExpense.updateCategoryBudget(modelCategory, budget);
     await HelperSharedPref.setCategoryBudget(category, budget);
     await getAllCategories();
   }
