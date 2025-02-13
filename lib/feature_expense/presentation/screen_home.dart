@@ -56,12 +56,12 @@ class _ScreenHomeState extends State<ScreenHome> {
         },
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
+            icon: Icon(Icons.home_outlined),
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.add_circle),
-            label: 'Add',
+            icon: Icon(Icons.attach_money_outlined),
+            label: 'Pay',
           ),
         ],
       ),
