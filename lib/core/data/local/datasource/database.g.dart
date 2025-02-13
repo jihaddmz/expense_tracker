@@ -99,6 +99,8 @@ class _$AppDatabase extends AppDatabase {
             'CREATE TABLE IF NOT EXISTS `EntityMonth` (`date` TEXT NOT NULL, `savings` REAL NOT NULL, PRIMARY KEY (`date`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `EntityCategory` (`category` TEXT NOT NULL, `date` TEXT NOT NULL, `budget` REAL NOT NULL, `paid` REAL NOT NULL, PRIMARY KEY (`category`))');
+        await database.execute(
+            'CREATE TABLE IF NOT EXISTS `EntityPaid` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `day` INTEGER NOT NULL, `paid` REAL NOT NULL, `month` TEXT NOT NULL, `category` TEXT NOT NULL)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -131,6 +133,16 @@ class _$DaoExpense extends DaoExpense {
                   'budget': item.budget,
                   'paid': item.paid
                 }),
+        _entityPaidInsertionAdapter = InsertionAdapter(
+            database,
+            'EntityPaid',
+            (EntityPaid item) => <String, Object?>{
+                  'id': item.id,
+                  'day': item.day,
+                  'paid': item.paid,
+                  'month': item.month,
+                  'category': item.category
+                }),
         _entityCategoryUpdateAdapter = UpdateAdapter(
             database,
             'EntityCategory',
@@ -151,6 +163,8 @@ class _$DaoExpense extends DaoExpense {
   final InsertionAdapter<EntityMonth> _entityMonthInsertionAdapter;
 
   final InsertionAdapter<EntityCategory> _entityCategoryInsertionAdapter;
+
+  final InsertionAdapter<EntityPaid> _entityPaidInsertionAdapter;
 
   final UpdateAdapter<EntityCategory> _entityCategoryUpdateAdapter;
 
@@ -197,6 +211,51 @@ class _$DaoExpense extends DaoExpense {
   }
 
   @override
+  Future<List<EntityPaid>> getAllPaidByMonth(String month) async {
+    return _queryAdapter.queryList('SELECT * FROM EntityPaid WHERE month = ?1',
+        mapper: (Map<String, Object?> row) => EntityPaid(
+            day: row['day'] as int,
+            paid: row['paid'] as double,
+            month: row['month'] as String,
+            category: row['category'] as String),
+        arguments: [month]);
+  }
+
+  @override
+  Future<List<EntityPaid>> getAllPaidByMonthAndDay(
+    String month,
+    int day,
+  ) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM EntityPaid WHERE month = ?1 AND day = ?2',
+        mapper: (Map<String, Object?> row) => EntityPaid(
+            day: row['day'] as int,
+            paid: row['paid'] as double,
+            month: row['month'] as String,
+            category: row['category'] as String),
+        arguments: [month, day]);
+  }
+
+  @override
+  Future<List<double>> getAllPaidsByMonth(String month) async {
+    return _queryAdapter.queryList(
+        'SELECT paid FROM EntityPaid WHERE month = ?1',
+        mapper: (Map<String, Object?> row) => row.values.first as double,
+        arguments: [month]);
+  }
+
+  @override
+  Future<List<double>> getAllPaidsByMonthAndDay(
+    String month,
+    int day,
+  ) async {
+    return _queryAdapter.queryList(
+        'SELECT paid FROM EntityPaid WHERE month = ?1 and day = ?2',
+        mapper: (Map<String, Object?> row) => row.values.first as double,
+        arguments: [month, day]);
+  }
+
+  @override
   Future<void> insertMonth(EntityMonth month) async {
     await _entityMonthInsertionAdapter.insert(month, OnConflictStrategy.abort);
   }
@@ -205,6 +264,11 @@ class _$DaoExpense extends DaoExpense {
   Future<void> insertCategory(EntityCategory category) async {
     await _entityCategoryInsertionAdapter.insert(
         category, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> insertPaid(EntityPaid paid) async {
+    await _entityPaidInsertionAdapter.insert(paid, OnConflictStrategy.abort);
   }
 
   @override

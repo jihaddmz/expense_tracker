@@ -53,9 +53,6 @@ class CustomBarChart extends StatelessWidget {
     );
     String text;
     switch (value.toInt()) {
-      case 0:
-        text = '1';
-        break;
       case 1:
         text = '5';
         break;
@@ -109,10 +106,10 @@ class CustomBarChart extends StatelessWidget {
         show: false,
       );
 
-  LinearGradient get barsGradient => const LinearGradient(
+  LinearGradient get barsGradient1 => const LinearGradient(
         colors: [
-          colorBlue,
-          colorBlue,
+          colorPink,
+          colorPink,
         ],
         begin: Alignment.bottomCenter,
         end: Alignment.topCenter,
@@ -120,8 +117,8 @@ class CustomBarChart extends StatelessWidget {
 
   LinearGradient get barsGradient2 => const LinearGradient(
         colors: [
-          colorPink,
-          colorPink,
+          colorLightPink,
+          colorLightPink,
         ],
         begin: Alignment.bottomCenter,
         end: Alignment.topCenter,
@@ -129,8 +126,8 @@ class CustomBarChart extends StatelessWidget {
 
   LinearGradient get barsGradient3 => const LinearGradient(
         colors: [
-          colorLightPink,
-          colorLightPink,
+          colorTeal,
+          colorTeal,
         ],
         begin: Alignment.bottomCenter,
         end: Alignment.topCenter,
@@ -138,8 +135,8 @@ class CustomBarChart extends StatelessWidget {
 
   LinearGradient get barsGradient4 => const LinearGradient(
         colors: [
-          colorTeal,
-          colorTeal,
+          colorYellow,
+          colorYellow,
         ],
         begin: Alignment.bottomCenter,
         end: Alignment.topCenter,
@@ -147,23 +144,14 @@ class CustomBarChart extends StatelessWidget {
 
   LinearGradient get barsGradient5 => const LinearGradient(
         colors: [
-          colorYellow,
-          colorYellow,
+          colorGreen,
+          colorGreen,
         ],
         begin: Alignment.bottomCenter,
         end: Alignment.topCenter,
       );
 
   LinearGradient get barsGradient6 => const LinearGradient(
-        colors: [
-          colorGreen,
-          colorGreen,
-        ],
-        begin: Alignment.bottomCenter,
-        end: Alignment.topCenter,
-      );
-
-  LinearGradient get barsGradient7 => const LinearGradient(
         colors: [
           colorOrange,
           colorOrange,
@@ -174,18 +162,18 @@ class CustomBarChart extends StatelessWidget {
 
   List<BarChartGroupData> get barGroups => [
         BarChartGroupData(
-          x: 0,
+          x: 1,
           barRods: [
             BarChartRodData(
               width: 20,
               toY: listOfPercentage[0],
-              gradient: barsGradient,
+              gradient: barsGradient1,
             )
           ],
           showingTooltipIndicators: [0],
         ),
         BarChartGroupData(
-          x: 1,
+          x: 2,
           barRods: [
             BarChartRodData(
               width: 20,
@@ -196,7 +184,7 @@ class CustomBarChart extends StatelessWidget {
           showingTooltipIndicators: [0],
         ),
         BarChartGroupData(
-          x: 2,
+          x: 3,
           barRods: [
             BarChartRodData(
               width: 20,
@@ -207,7 +195,7 @@ class CustomBarChart extends StatelessWidget {
           showingTooltipIndicators: [0],
         ),
         BarChartGroupData(
-          x: 3,
+          x: 4,
           barRods: [
             BarChartRodData(
               width: 20,
@@ -218,7 +206,7 @@ class CustomBarChart extends StatelessWidget {
           showingTooltipIndicators: [0],
         ),
         BarChartGroupData(
-          x: 4,
+          x: 5,
           barRods: [
             BarChartRodData(
               width: 20,
@@ -229,23 +217,12 @@ class CustomBarChart extends StatelessWidget {
           showingTooltipIndicators: [0],
         ),
         BarChartGroupData(
-          x: 5,
+          x: 6,
           barRods: [
             BarChartRodData(
               width: 20,
               toY: listOfPercentage[5],
               gradient: barsGradient6,
-            )
-          ],
-          showingTooltipIndicators: [0],
-        ),
-        BarChartGroupData(
-          x: 6,
-          barRods: [
-            BarChartRodData(
-              width: 20,
-              toY: listOfPercentage[6],
-              gradient: barsGradient7,
             )
           ],
           showingTooltipIndicators: [0],

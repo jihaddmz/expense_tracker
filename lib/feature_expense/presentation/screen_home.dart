@@ -31,9 +31,7 @@ class _ScreenHomeState extends State<ScreenHome> {
 
   void initializeMonthsAndCategories() async {
     await getxController.addMonth();
-    await getxController.getAllMonths();
-    await getxController
-        .getAllCategories();
+    await getxController.refreshUI();
   }
 
   @override
@@ -67,7 +65,8 @@ class _ScreenHomeState extends State<ScreenHome> {
           ),
         ],
       ),
-      body: Obx(() => getxController.isLoading.value ? buildLoader() : buildBody()) ,
+      body: Obx(
+          () => getxController.isLoading.value ? buildLoader() : buildBody()),
     );
   }
 
@@ -133,9 +132,7 @@ class _ScreenHomeState extends State<ScreenHome> {
                           dropdownColor: colorWhite,
                           underline: const SizedBox(),
                           value: getxController.selectedMonth.value,
-                          items: getxController
-                              .listOfMonths
-                              .map((month) {
+                          items: getxController.listOfMonths.map((month) {
                             return DropdownMenuItem(
                                 value: month.date,
                                 child: customCaption(month.date));
@@ -143,8 +140,7 @@ class _ScreenHomeState extends State<ScreenHome> {
                           onChanged: (month) {
                             getxController
                                 .changeSelectedMonth(month.toString());
-                            getxController
-                                .getAllCategories();
+                            getxController.getAllCategories();
                           }),
                     ),
                   ),
@@ -161,12 +157,13 @@ class _ScreenHomeState extends State<ScreenHome> {
               ],
             ),
           ),
-          const SizedBox(
-            height: 200,
-            child: CustomBarChart(
-              listOfPercentage: [8, 22, 4, 20, 56, 100, 70],
+          if (getxController.listOfPaidPercentages.isNotEmpty)
+            SizedBox(
+              height: 200,
+              child: CustomBarChart(
+                listOfPercentage: getxController.listOfPaidPercentages,
+              ),
             ),
-          ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(

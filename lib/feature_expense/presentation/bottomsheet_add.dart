@@ -116,7 +116,8 @@ class _BottomsheetAddState extends State<BottomsheetAdd> {
               if (!isTextPaidValid()) return;
               await getxController.updateCategoryPaid(_selectedMonth,
                   _selectedCategory, double.parse(_paid.replaceAll("\$", "")));
-              await getxController.getAllCategories();
+                  await getxController.insertPaid(_selectedMonth, _selectedCategory, double.parse(_paid.replaceAll("\$", "").replaceAll("LL", "")));
+              await getxController.refreshUI();
               setState(() {
                 _paid = "\$0.0";
               });

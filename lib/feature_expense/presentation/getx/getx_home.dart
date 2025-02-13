@@ -7,17 +7,27 @@ import 'package:expense_tracker/core/helpers/helper_sharedpref.dart';
 import 'package:get/state_manager.dart';
 import 'package:intl/intl.dart';
 
+import '../../domain/model/model_paid.dart';
+
 class GetxHome extends GetxController {
   late RepositoryExpense repositoryExpense;
 
   var listOfMonths = <ModelMonth>[].obs;
   var listOfCategories = <ModelCategory>[].obs;
+  var listOfPaidPercentages = <double>[].obs;
   var selectedMonth = "".obs;
   var expensesByMonth = 0.0.obs;
   var isLoading = false.obs;
 
   GetxHome() {
     repositoryExpense = getIt();
+  }
+
+  Future<void> refreshUI() async {
+    await getAllMonths();
+    await getAllCategories();
+    await getAllExpensesByMonth();
+    await getAllPaid();
   }
 
   void changeSelectedMonth(String month) {
@@ -33,7 +43,8 @@ class GetxHome extends GetxController {
         "${formattedDate.split(" ")[0].substring(0, 3)} ${formattedDate.split(" ")[1]}";
     changeSelectedMonth(shrinkedDate);
 
-    await repositoryExpense.getModelMonthByDate(shrinkedDate)
+    await repositoryExpense
+        .getModelMonthByDate(shrinkedDate)
         .then((value) async {
       if (value == null) {
         // this month hasn't been added before, so add it to the database
@@ -59,7 +70,32 @@ class GetxHome extends GetxController {
     listOfCategories.value =
         await repositoryExpense.getAllCategories(selectedMonth.value);
     listOfCategories.sort((a, b) => b.paid.compareTo(a.paid));
-    expensesByMonth.value = getAllExpensesByMonth();
+  }
+
+  Future<void> getAllPaid() async {
+    var paid5 = await repositoryExpense.getSumOfPaidByMonthAndDay(
+        selectedMonth.value, 5);
+    var paid10 = await repositoryExpense.getSumOfPaidByMonthAndDay(
+        selectedMonth.value, 10);
+    var paid15 = await repositoryExpense.getSumOfPaidByMonthAndDay(
+        selectedMonth.value, 15);
+    var paid20 = await repositoryExpense.getSumOfPaidByMonthAndDay(
+        selectedMonth.value, 20);
+    var paid25 = await repositoryExpense.getSumOfPaidByMonthAndDay(
+        selectedMonth.value, 25);
+    var paid30 = await repositoryExpense.getSumOfPaidByMonthAndDay(
+        selectedMonth.value, 30);
+
+    expensesByMonth.value == 0.0
+        ? listOfPaidPercentages.value = [0, 0, 0, 0, 0, 0]
+        : listOfPaidPercentages.value = [
+            paid5 * 100 / expensesByMonth.value,
+            paid10 * 100 / expensesByMonth.value,
+            paid15 * 100 / expensesByMonth.value,
+            paid20 * 100 / expensesByMonth.value,
+            paid25 * 100 / expensesByMonth.value,
+            paid30 * 100 / expensesByMonth.value
+          ];
   }
 
   Future<void> insertCategory(ModelCategory modelCategory) async {
@@ -68,21 +104,17 @@ class GetxHome extends GetxController {
 
   Future<void> updateCategoryPaid(
       String date, String categoryName, double paid) async {
-    ModelCategory? category =
-        await repositoryExpense.getCategoryByDateAndCategory(
-            date, categoryName);
+    ModelCategory? category = await repositoryExpense
+        .getCategoryByDateAndCategory(date, categoryName);
     if (category == null) {
       return;
     }
     await repositoryExpense.updateCategoryPaid(category, category.paid + paid);
   }
 
-  double getAllExpensesByMonth() {
-    double total = 0;
-    for (var item in listOfCategories) {
-      total += item.paid;
-    }
-    return total;
+  Future<void> getAllExpensesByMonth() async {
+    expensesByMonth.value =
+        await repositoryExpense.getSumOfPaidByMonth(selectedMonth.value);
   }
 
   Future<void> updateCategoryBudget(String category, double budget) async {
@@ -91,5 +123,11 @@ class GetxHome extends GetxController {
     await repositoryExpense.updateCategoryBudget(modelCategory, budget);
     await HelperSharedPref.setCategoryBudget(category, budget);
     await getAllCategories();
+  }
+
+  Future<void> insertPaid(String month, String category, double paid) async {
+    int day = DateTime.now().day;
+    await repositoryExpense.insertPaid(
+        ModelPaid(month: month, day: day, paid: paid, category: category));
   }
 }
