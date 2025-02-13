@@ -66,8 +66,7 @@ class _BottomsheetAddState extends State<BottomsheetAdd> {
             ),
             Expanded(
               child: PopupMenuButton(
-                initialValue:
-                    getxController.listOfCategories[0].category,
+                initialValue: getxController.listOfCategories[0].category,
                 onSelected: (value) => {
                   setState(() {
                     _selectedCategory = value.toString();
@@ -75,9 +74,7 @@ class _BottomsheetAddState extends State<BottomsheetAdd> {
                 },
                 color: colorWhite,
                 itemBuilder: (BuildContext context) {
-                  return getxController
-                      .listOfCategories
-                      .map((category) {
+                  return getxController.listOfCategories.map((category) {
                     return PopupMenuItem(
                       value: category.category,
                       child: customCaption(category.category),
@@ -106,46 +103,51 @@ class _BottomsheetAddState extends State<BottomsheetAdd> {
         customSubHeader(_paid),
         Expanded(
           child: KeypadScreen(onKeyPressed: (action) async {
-            if (action == "close") {
-              widget.onConfirm();
-            } else if (action == "backspace") {
-              setState(() {
-                _paid = _paid.substring(0, _paid.length - 1);
-              });
-            } else if (action == "confirm") {
-              if (!isTextPaidValid()) return;
-              await getxController.updateCategoryPaid(_selectedMonth,
-                  _selectedCategory, double.parse(_paid.replaceAll("\$", "")));
-                  await getxController.insertPaid(_selectedMonth, _selectedCategory, double.parse(_paid.replaceAll("\$", "").replaceAll("LL", "")));
-              await getxController.refreshUI();
-              setState(() {
-                _paid = "\$0.0";
-              });
-            } else if (action == ".") {
-              if (!_paid.contains(".") && _paid.isNotEmpty) {
-                setState(() {
-                  _paid += action;
-                });
-              }
-            } else if (action == "\$" || action == "LL") {
-              if (!_paid.contains("\$") && !_paid.contains("LL")) {
-                setState(() {
-                  _paid = "$action$_paid";
-                });
-              }
-            } else if (_paid.contains("0.0")) {
-              setState(() {
-                _paid = action;
-              });
-            } else {
-              setState(() {
-                _paid += action;
-              });
-            }
+            onActionPress(action);
           }),
         ),
       ],
     );
+  }
+
+  void onActionPress(String action) async {
+    if (action == "close") {
+      widget.onConfirm();
+    } else if (action == "backspace") {
+      setState(() {
+        _paid = _paid.substring(0, _paid.length - 1);
+      });
+    } else if (action == "confirm") {
+      if (!isTextPaidValid()) return;
+      await getxController.updateCategoryPaid(_selectedMonth, _selectedCategory,
+          double.parse(_paid.replaceAll("\$", "").replaceAll("LL", "")));
+      await getxController.insertPaid(_selectedMonth, _selectedCategory,
+          double.parse(_paid.replaceAll("\$", "").replaceAll("LL", "")));
+      await getxController.refreshUI();
+      setState(() {
+        _paid = "\$0.0";
+      });
+    } else if (action == ".") {
+      if (!_paid.contains(".") && _paid.isNotEmpty) {
+        setState(() {
+          _paid += action;
+        });
+      }
+    } else if (action == "\$" || action == "LL") {
+      if (!_paid.contains("\$") && !_paid.contains("LL")) {
+        setState(() {
+          _paid = "$action$_paid";
+        });
+      }
+    } else if (_paid.contains("0.0")) {
+      setState(() {
+        _paid = action;
+      });
+    } else {
+      setState(() {
+        _paid += action;
+      });
+    }
   }
 
   bool isTextPaidValid() {

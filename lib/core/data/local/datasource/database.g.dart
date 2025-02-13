@@ -100,7 +100,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `EntityCategory` (`category` TEXT NOT NULL, `date` TEXT NOT NULL, `budget` REAL NOT NULL, `paid` REAL NOT NULL, PRIMARY KEY (`category`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `EntityPaid` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `day` INTEGER NOT NULL, `paid` REAL NOT NULL, `month` TEXT NOT NULL, `category` TEXT NOT NULL)');
+            'CREATE TABLE IF NOT EXISTS `EntityPaid` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `day` INTEGER NOT NULL, `paid` REAL NOT NULL, `month` TEXT NOT NULL, `category` TEXT NOT NULL)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -214,6 +214,7 @@ class _$DaoExpense extends DaoExpense {
   Future<List<EntityPaid>> getAllPaidByMonth(String month) async {
     return _queryAdapter.queryList('SELECT * FROM EntityPaid WHERE month = ?1',
         mapper: (Map<String, Object?> row) => EntityPaid(
+            id: row['id'] as int?,
             day: row['day'] as int,
             paid: row['paid'] as double,
             month: row['month'] as String,
@@ -229,6 +230,7 @@ class _$DaoExpense extends DaoExpense {
     return _queryAdapter.queryList(
         'SELECT * FROM EntityPaid WHERE month = ?1 AND day = ?2',
         mapper: (Map<String, Object?> row) => EntityPaid(
+            id: row['id'] as int?,
             day: row['day'] as int,
             paid: row['paid'] as double,
             month: row['month'] as String,

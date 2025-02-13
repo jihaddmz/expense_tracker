@@ -4,13 +4,14 @@ import 'package:floor/floor.dart';
 @entity
 class EntityPaid {
   @PrimaryKey(autoGenerate: true)
-  final int id = 0;
+  final int? id;
   final int day;
   final double paid;
   final String month;
   final String category;
 
   EntityPaid({
+    this.id,
     required this.day,
     required this.paid,
     required this.month,
