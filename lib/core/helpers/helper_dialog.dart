@@ -19,7 +19,7 @@ class HelperDialog {
                 content: customTextFieldWithController(
                     context,
                     controller,
-                    inputType: TextInputType.number,
+                    inputType:  TextInputType.phone,
                     (value) {}),
                 actionsAlignment: MainAxisAlignment.center,
                 actions: [

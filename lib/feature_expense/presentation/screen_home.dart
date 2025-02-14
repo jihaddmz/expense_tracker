@@ -20,7 +20,8 @@ class ScreenHome extends StatefulWidget {
 class _ScreenHomeState extends State<ScreenHome> {
   int _selectedBottomNavItem = 0;
   final getxController = Get.put(GetxHome());
-  final TextEditingController _controllerBudget = TextEditingController();
+  final TextEditingController _controllerBudget =
+      TextEditingController(text: "70");
   final TextEditingController _controllerDolarRate =
       TextEditingController(text: "0");
 
@@ -91,18 +92,17 @@ class _ScreenHomeState extends State<ScreenHome> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Obx(() =>
-                        customSubHeader("\$${getxController.dolarRate.value}")),
+                    Obx(() => customSubHeader(
+                        "L.L.${getxController.dolarRate.value}")),
                     GestureDetector(
                       onTap: () {
                         HelperDialog.showTypableDialog(
                             context,
                             "Set the dolar rate to convert from L.L. to USD.",
-                            _controllerDolarRate,
-                            () {
-                              getxController.changeDolarRate(
-                                  int.parse(_controllerDolarRate.text));
-                            });
+                            _controllerDolarRate, () {
+                          getxController.changeDolarRate(
+                              int.parse(_controllerDolarRate.text));
+                        });
                       },
                       child: const Icon(
                         Icons.edit_outlined,
@@ -112,7 +112,7 @@ class _ScreenHomeState extends State<ScreenHome> {
                   ],
                 ),
               ),
-              customCaption("Dolar Rate"),
+              customCaption("USD Rate"),
             ],
           ),
           Padding(
@@ -166,13 +166,17 @@ class _ScreenHomeState extends State<ScreenHome> {
               ],
             ),
           ),
-          if (getxController.listOfPaidPercentages.isNotEmpty)
-            SizedBox(
+          AnimatedOpacity(
+            duration: const Duration(seconds: 3),
+            opacity: getxController.listOfPaidPercentages.isEmpty ? 0 : 1,
+            curve: Curves.decelerate,
+            child: SizedBox(
               height: 200,
               child: CustomBarChart(
                 listOfPercentage: getxController.listOfPaidPercentages,
               ),
             ),
+          ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
@@ -189,8 +193,13 @@ class _ScreenHomeState extends State<ScreenHome> {
               ],
             ),
           ),
-          Column(
-            children: buildCategories(),
+          AnimatedOpacity(
+            duration: const Duration(seconds: 3),
+            opacity: getxController.listOfCategories.isEmpty ? 0 : 1,
+            curve: Curves.bounceIn,
+            child: Column(
+              children: buildCategories(),
+            ),
           )
         ],
       ),
@@ -204,39 +213,14 @@ class _ScreenHomeState extends State<ScreenHome> {
           .firstWhere((element) => element.key == category.category);
       return itemCategory(categoryItem.value["color"], category.category,
           category.paid, category.budget, categoryItem.value["icon"], () {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                backgroundColor: colorWhite,
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text("Set the budget for ${category.category}"),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: TextField(
-                        controller: _controllerBudget,
-                        decoration:
-                            const InputDecoration(label: Text("Budget")),
-                        keyboardType: TextInputType.number,
-                      ),
-                    ),
-                    customButton(
-                        onClick: () async {
-                          await getxController.updateCategoryBudget(
-                              category.category,
-                              double.parse(_controllerBudget.text));
-                          _controllerBudget.clear();
-                          Navigator.pop(context);
-                        },
-                        text: "Set",
-                        textColor: colorBlack,
-                        widthFactor: 1)
-                  ],
-                ),
-              );
-            });
+        HelperDialog.showTypableDialog(
+            context,
+            "Set the budget for ${category.category}",
+            _controllerBudget, () async {
+          await getxController.updateCategoryBudget(
+              category.category, double.parse(_controllerBudget.text));
+          _controllerBudget.text = "70";
+        });
       });
     }).toList();
   }
