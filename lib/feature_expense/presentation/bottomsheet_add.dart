@@ -119,10 +119,17 @@ class _BottomsheetAddState extends State<BottomsheetAdd> {
       });
     } else if (action == "confirm") {
       if (!isTextPaidValid()) return;
-      await getxController.updateCategoryPaid(_selectedMonth, _selectedCategory,
-          double.parse(_paid.replaceAll("\$", "").replaceAll("LL", "")));
-      await getxController.insertPaid(_selectedMonth, _selectedCategory,
-          double.parse(_paid.replaceAll("\$", "").replaceAll("LL", "")));
+      bool isItLLPrice = _paid.contains("LL"); // if the price paid is in LL
+      _paid = _paid.replaceAll("\$", "").replaceAll("LL", "");
+      if (isItLLPrice) {
+        // convert this amount from LL to usd
+        _paid = getxController.convertFromLLToUSD(double.parse(_paid) ).toString();
+      }
+
+      await getxController.updateCategoryPaid(
+          _selectedMonth, _selectedCategory, double.parse(_paid));
+      await getxController.insertPaid(
+          _selectedMonth, _selectedCategory, double.parse(_paid));
       await getxController.refreshUI();
       setState(() {
         _paid = "\$0.0";

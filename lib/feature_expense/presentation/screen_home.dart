@@ -19,8 +19,10 @@ class ScreenHome extends StatefulWidget {
 
 class _ScreenHomeState extends State<ScreenHome> {
   int _selectedBottomNavItem = 0;
-  final TextEditingController _controllerBudget = TextEditingController();
   final getxController = Get.put(GetxHome());
+  final TextEditingController _controllerBudget = TextEditingController();
+  final TextEditingController _controllerDolarRate =
+      TextEditingController(text: "0");
 
   @override
   void initState() {
@@ -78,6 +80,7 @@ class _ScreenHomeState extends State<ScreenHome> {
   }
 
   Widget buildBody() {
+    debugPrint("buildBody");
     return SingleChildScrollView(
       child: Column(
         spacing: 20,
@@ -85,25 +88,31 @@ class _ScreenHomeState extends State<ScreenHome> {
           Column(
             children: [
               Center(
-                child: customSubHeader("\$32,000"),
-              ),
-              Center(
-                child: GestureDetector(
-                  onTap: () {
-                    // todo : implement onTap
-                  },
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      customCaption("Total Balance"),
-                      const Icon(
-                        Icons.keyboard_arrow_down,
-                        color: colorGreyDark,
-                      )
-                    ],
-                  ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Obx(() =>
+                        customSubHeader("\$${getxController.dolarRate.value}")),
+                    GestureDetector(
+                      onTap: () {
+                        HelperDialog.showTypableDialog(
+                            context,
+                            "Set the dolar rate to convert from L.L. to USD.",
+                            _controllerDolarRate,
+                            () {
+                              getxController.changeDolarRate(
+                                  int.parse(_controllerDolarRate.text));
+                            });
+                      },
+                      child: const Icon(
+                        Icons.edit_outlined,
+                        color: colorBlack,
+                      ),
+                    )
+                  ],
                 ),
               ),
+              customCaption("Dolar Rate"),
             ],
           ),
           Padding(

@@ -18,12 +18,27 @@ class GetxHome extends GetxController {
   var selectedMonth = "".obs;
   var expensesByMonth = 0.0.obs;
   var isLoading = false.obs;
+  var dolarRate = 0.obs;
+
+  void getDolarRate() async {
+    dolarRate.value = HelperSharedPref.getDolarRate();
+  }
+
+  Future<void> changeDolarRate(int rate) async {
+    await HelperSharedPref.setDolarRate(rate);
+    getDolarRate();
+  }
+
+  double convertFromLLToUSD(double paid) {
+    return paid / dolarRate.value;
+  }
 
   GetxHome() {
     repositoryExpense = getIt();
   }
 
   Future<void> refreshUI() async {
+    getDolarRate();
     await getAllMonths();
     await getAllCategories();
     await getAllExpensesByMonth();

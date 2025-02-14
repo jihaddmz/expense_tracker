@@ -1,19 +1,20 @@
 import 'package:expense_tracker/core/config/color.dart';
 import 'package:flutter/material.dart';
 
-Widget customTextFieldWithController(BuildContext context,
-    TextEditingController controller,
-    Function(String) onValueChange, {
-      int maxLines = 1,
-      int minLines = 1,
-      Color color = Colors.black,
-      Widget? suffixIcon,
-      bool enabled = true,
-      String? labelText,
-      bool obscureText = false,
-      String hintText = "",
-      TextInputType inputType = TextInputType.text,
-    }) {
+Widget customTextFieldWithController(
+  BuildContext context,
+  TextEditingController controller,
+  Function(String) onValueChange, {
+  int maxLines = 1,
+  int minLines = 1,
+  Color color = Colors.black,
+  Widget? suffixIcon,
+  bool enabled = true,
+  String? labelText,
+  bool obscureText = false,
+  String hintText = "",
+  TextInputType inputType = TextInputType.text,
+}) {
   return TextFormField(
     controller: controller,
     onChanged: (value) {
@@ -25,6 +26,7 @@ Widget customTextFieldWithController(BuildContext context,
     maxLines: maxLines,
     cursorColor: Colors.black,
     obscureText: obscureText,
+    selectionControls: EmptyTextSelectionControls(),
     style: TextStyle(color: color),
     decoration: InputDecoration(
         hintText: hintText,

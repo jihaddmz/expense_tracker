@@ -12,8 +12,8 @@ class HelperSharedPref {
     await instance.setInt("dolar_rate", rate);
   }
 
-  static Future<int> getDolarRate() async {
-    return instance.getInt("dolar_rate") ?? 0;
+  static int getDolarRate() {
+    return instance.getInt("dolar_rate") ?? 89500;
   }
 
   static Future<void> setCategoriesBudget() async {
