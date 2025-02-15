@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
     ));
 
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Budgetory',
       debugShowCheckedModeBanner: false,
       theme: ThemeData.light().copyWith(
         scaffoldBackgroundColor: colorWhite,
