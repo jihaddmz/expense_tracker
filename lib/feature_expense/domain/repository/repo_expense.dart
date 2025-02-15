@@ -89,14 +89,6 @@ class RepositoryExpense {
     await daoExpense.insertPaid(modelPaid.toEntity());
   }
 
-  Future<List<ModelPaid>> getAllPaidByMonth(String month) async {
-    return await daoExpense
-        .getAllPaidByMonth(month)
-        .then((value) => List.generate(value.length, (index) {
-              return value[index].toModel();
-            }));
-  }
-
   Future<double> getSumOfPaidByMonth(String month) async {
     return (await daoExpense.getAllPaidsByMonth(month))
         .fold(0.0, (prev, element) => (prev as double) + element);

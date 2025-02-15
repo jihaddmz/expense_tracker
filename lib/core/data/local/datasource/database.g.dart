@@ -100,7 +100,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `EntityCategory` (`category` TEXT NOT NULL, `date` TEXT NOT NULL, `budget` REAL NOT NULL, `paid` REAL NOT NULL, PRIMARY KEY (`category`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `EntityPaid` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `day` INTEGER NOT NULL, `paid` REAL NOT NULL, `month` TEXT NOT NULL, `category` TEXT NOT NULL)');
+            'CREATE TABLE IF NOT EXISTS `EntityPaid` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `day` INTEGER NOT NULL, `paid` REAL NOT NULL, `month` TEXT NOT NULL, `category` TEXT NOT NULL, `date` TEXT NOT NULL)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -141,7 +141,8 @@ class _$DaoExpense extends DaoExpense {
                   'day': item.day,
                   'paid': item.paid,
                   'month': item.month,
-                  'category': item.category
+                  'category': item.category,
+                  'date': item.date
                 }),
         _entityCategoryUpdateAdapter = UpdateAdapter(
             database,
@@ -218,7 +219,8 @@ class _$DaoExpense extends DaoExpense {
             day: row['day'] as int,
             paid: row['paid'] as double,
             month: row['month'] as String,
-            category: row['category'] as String),
+            category: row['category'] as String,
+            date: row['date'] as String),
         arguments: [month]);
   }
 
@@ -234,7 +236,8 @@ class _$DaoExpense extends DaoExpense {
             day: row['day'] as int,
             paid: row['paid'] as double,
             month: row['month'] as String,
-            category: row['category'] as String),
+            category: row['category'] as String,
+            date: row['date'] as String),
         arguments: [month, day]);
   }
 

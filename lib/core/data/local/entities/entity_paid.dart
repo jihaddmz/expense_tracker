@@ -9,6 +9,7 @@ class EntityPaid {
   final double paid;
   final String month;
   final String category;
+  final String date;
 
   EntityPaid({
     this.id,
@@ -16,6 +17,7 @@ class EntityPaid {
     required this.paid,
     required this.month,
     required this.category,
+    required this.date,
   });
 
   ModelPaid toModel() {
@@ -24,6 +26,7 @@ class EntityPaid {
       paid: paid,
       month: month,
       category: category,
+      date: date
     );
   }
 }

@@ -5,12 +5,14 @@ class ModelPaid {
   final double paid;
   final String month;
   final String category;
+  final String date;
 
   ModelPaid({
     required this.day,
     required this.paid,
     required this.month,
     required this.category,
+    this.date = ""
   });
 
   EntityPaid toEntity() {
@@ -19,6 +21,7 @@ class ModelPaid {
       paid: paid,
       month: month,
       category: category,
+      date: "${month.split(" ")[0]} $day, ${month.split(" ")[1]}",
     );
   }
 }
