@@ -81,7 +81,6 @@ class _ScreenHomeState extends State<ScreenHome> {
   }
 
   Widget buildBody() {
-    debugPrint("buildBody");
     return SingleChildScrollView(
       child: Column(
         spacing: 20,
@@ -149,7 +148,7 @@ class _ScreenHomeState extends State<ScreenHome> {
                           onChanged: (month) {
                             getxController
                                 .changeSelectedMonth(month.toString());
-                            getxController.getAllCategories();
+                            getxController.refreshUI();
                           }),
                     ),
                   ),

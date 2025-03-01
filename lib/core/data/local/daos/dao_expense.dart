@@ -1,6 +1,7 @@
 import 'package:expense_tracker/core/data/local/entities/entity_paid.dart';
 import 'package:expense_tracker/core/data/local/entities/entity_category.dart';
 import 'package:expense_tracker/core/data/local/entities/entity_month.dart';
+import 'package:expense_tracker/feature_expense/domain/model/model_month.dart';
 import 'package:floor/floor.dart';
 
 @dao
@@ -41,4 +42,7 @@ abstract class DaoExpense {
 
   @Query('SELECT paid FROM EntityPaid WHERE month = :month and day = :day')
   Future<List<double>> getAllPaidsByMonthAndDay(String month, int day);
+
+  @delete
+  Future<void> deleteMonth(EntityMonth month);
 }

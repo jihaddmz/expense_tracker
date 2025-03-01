@@ -98,7 +98,7 @@ class _$AppDatabase extends AppDatabase {
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `EntityMonth` (`date` TEXT NOT NULL, `savings` REAL NOT NULL, PRIMARY KEY (`date`))');
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `EntityCategory` (`category` TEXT NOT NULL, `date` TEXT NOT NULL, `budget` REAL NOT NULL, `paid` REAL NOT NULL, PRIMARY KEY (`category`))');
+            'CREATE TABLE IF NOT EXISTS `EntityCategory` (`category` TEXT NOT NULL, `date` TEXT NOT NULL, `budget` REAL NOT NULL, `paid` REAL NOT NULL, PRIMARY KEY (`category`, `date`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `EntityPaid` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `day` INTEGER NOT NULL, `paid` REAL NOT NULL, `month` TEXT NOT NULL, `category` TEXT NOT NULL, `date` TEXT NOT NULL)');
 
@@ -147,13 +147,19 @@ class _$DaoExpense extends DaoExpense {
         _entityCategoryUpdateAdapter = UpdateAdapter(
             database,
             'EntityCategory',
-            ['category'],
+            ['category', 'date'],
             (EntityCategory item) => <String, Object?>{
                   'category': item.category,
                   'date': item.date,
                   'budget': item.budget,
                   'paid': item.paid
-                });
+                }),
+        _entityMonthDeletionAdapter = DeletionAdapter(
+            database,
+            'EntityMonth',
+            ['date'],
+            (EntityMonth item) =>
+                <String, Object?>{'date': item.date, 'savings': item.savings});
 
   final sqflite.DatabaseExecutor database;
 
@@ -168,6 +174,8 @@ class _$DaoExpense extends DaoExpense {
   final InsertionAdapter<EntityPaid> _entityPaidInsertionAdapter;
 
   final UpdateAdapter<EntityCategory> _entityCategoryUpdateAdapter;
+
+  final DeletionAdapter<EntityMonth> _entityMonthDeletionAdapter;
 
   @override
   Future<List<EntityMonth>> getAllMonths() async {
@@ -280,5 +288,10 @@ class _$DaoExpense extends DaoExpense {
   Future<void> updateCategory(EntityCategory category) async {
     await _entityCategoryUpdateAdapter.update(
         category, OnConflictStrategy.abort);
+  }
+
+  @override
+  Future<void> deleteMonth(EntityMonth month) async {
+    await _entityMonthDeletionAdapter.delete(month);
   }
 }

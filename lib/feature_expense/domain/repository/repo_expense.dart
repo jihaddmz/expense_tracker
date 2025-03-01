@@ -8,6 +8,10 @@ class RepositoryExpense {
 
   RepositoryExpense(this.daoExpense);
 
+  Future<void> deleteMonthByDate(String date) async {
+    await daoExpense.deleteMonth((await getModelMonthByDate(date))!.toEntity());
+  }
+
   Future<void> insertMonth(ModelMonth modelMonth) async {
     await daoExpense.insertMonth(modelMonth.toEntity());
   }

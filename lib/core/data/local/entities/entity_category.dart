@@ -1,11 +1,9 @@
 import 'package:expense_tracker/feature_expense/domain/model/model_category.dart';
 import 'package:floor/floor.dart';
 
-@entity
+@Entity(primaryKeys: ['category', 'date'])
 class EntityCategory {
-  @primaryKey
   final String category;
-  @primaryKey
   final String date;
   final double budget;
   final double paid;
