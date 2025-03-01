@@ -1,7 +1,6 @@
 import 'package:expense_tracker/core/data/local/entities/entity_paid.dart';
 import 'package:expense_tracker/core/data/local/entities/entity_category.dart';
 import 'package:expense_tracker/core/data/local/entities/entity_month.dart';
-import 'package:expense_tracker/feature_expense/domain/model/model_month.dart';
 import 'package:floor/floor.dart';
 
 @dao
