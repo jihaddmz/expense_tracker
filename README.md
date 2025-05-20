@@ -1,16 +1,15 @@
-# expense_tracker
+# Budgetory
 
-A new Flutter project.
+A mobile app for managing expenses and budgets across different categories (car, home, bills ...), also users can add costs in L.L. & USD.
 
-## Getting Started
+## Project Overview
+This project has been deployed to Google Play & App Store, but due to apple developer account not being renewed, it won't be shown on App Store
 
-This project is a starting point for a Flutter application.
+Android: https://play.google.com/store/apps/details?id=com.jihaddmz.budgetory
 
-A few resources to get you started if this is your first Flutter project:
+iOS: https://apps.apple.com/us/app/budgetory-make-it-a-story/id6742078543
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+
+https://github.com/user-attachments/assets/af2aebfc-e612-4fa8-af4c-6229fe9bb18e
+
